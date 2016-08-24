@@ -19,7 +19,7 @@ from netCDF4 import Dataset #netcdf usage
 import numpy as np
 
 #User Stack
-import utilities.ConfigParserLocal as ConfigParserLocal
+import io_utils.ConfigParserLocal as ConfigParserLocal
 
 __author__   = 'Shaun Bell'
 __email__    = 'shaun.bell@noaa.gov'
