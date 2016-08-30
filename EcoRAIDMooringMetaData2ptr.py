@@ -37,6 +37,8 @@ parser.add_argument('SiteID', metavar='SiteID', type=str,
 	help='Base Site ID')
 parser.add_argument('year', metavar='datatype', type=int,
 	help="year")
+parser.add_argument('system', metavar='system', type=str,
+	help="root system path (pavlof:/home/ecoraid/data/)")
 parser.add_argument('MooringID', metavar='MooringID', nargs='+', type=str,
 	help='list of mooring ids')
 
@@ -54,14 +56,20 @@ for MooringSite in args.MooringID:
 
 	for k in data.keys():
 		if data[k]['isfinaldata'] == 'y':
-			print "{year}/Moorings/{mooringid}/final_data/{filename}".format(year=data[k]['year'],
+			print "{system}/{year}/Moorings/{mooringid}/final_data/{filename}".format(system=args.system,
+																year=data[k]['year'],
 																mooringid=data[k]['mooringid'],
 																filename=data[k]['filenamefinal'])
 		elif data[k]['isinitialarchive'] == 'y':
-			print "{year}/Moorings/{mooringid}/initial_archive/{filename}".format(year=data[k]['year'],
+			print "{system}/{year}/Moorings/{mooringid}/initial_archive/{filename}".format(system=args.system,
+																year=data[k]['year'],
 																mooringid=data[k]['mooringid'],
 																filename=data[k]['filenameinitial'])
 		if data[k]['isspecialarchive'] == 'y':
-			print "{year}/Moorings/{mooringid}/final_data/{filename}".format(year=data[k]['year'],
+			print "{system}/{year}/Moorings/{mooringid}/final_data/{filename}".format(system=args.system,
+																year=data[k]['year'],
 																mooringid=data[k]['mooringid'],
 																filename=data[k]['filenameinitial'])
+
+
+EcoFOCI_db.close()
