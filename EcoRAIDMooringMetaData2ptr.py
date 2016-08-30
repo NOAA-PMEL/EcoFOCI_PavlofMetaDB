@@ -44,4 +44,24 @@ args = parser.parse_args()
 
 
 EcoFOCI_db = EcoFOCI_db_datastatus()
-(db,cursor) = EcoFOCI_db.connect_to_DB()
+config_file = '/Volumes/WDC_internal/Users/bell/Programs/Python/db_connection_config_files/db_config_datastatus.pyini'
+(db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
+
+for MooringSite in args.MooringID:
+	data = EcoFOCI_db.read_table(table='ecoraid_filemetainfo',
+								 mooringid=MooringSite,
+								 year=args.year)
+
+	for k in data.keys():
+		if data[k]['isfinaldata'] == 'y':
+			print "{year}/Moorings/{mooringid}/final_data/{filename}".format(year=data[k]['year'],
+																mooringid=data[k]['mooringid'],
+																filename=data[k]['filenamefinal'])
+		elif data[k]['isinitialarchive'] == 'y':
+			print "{year}/Moorings/{mooringid}/initial_archive/{filename}".format(year=data[k]['year'],
+																mooringid=data[k]['mooringid'],
+																filename=data[k]['filenameinitial'])
+		if data[k]['isspecialarchive'] == 'y':
+			print "{year}/Moorings/{mooringid}/final_data/{filename}".format(year=data[k]['year'],
+																mooringid=data[k]['mooringid'],
+																filename=data[k]['filenameinitial'])

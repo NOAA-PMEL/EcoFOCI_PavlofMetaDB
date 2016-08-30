@@ -93,15 +93,15 @@ class EcoFOCI_db_datastatus(object):
 
 	def read_table(self, table=None, verbose=False, **kwargs):
 		"""build sql call based on kwargs"""
-		if kwargs is None:
-		    sql = ("SELECT * from `{0}` ").format(table)
+
+		if ('mooringid' in kwargs.keys()) and ('year' in kwargs.keys()):
+		    sql = ("SELECT * from `{0}` WHERE `mooringid`='{1}' and `year`={2}").format(table, kwargs['mooringid'], kwargs['year'])
 		elif 'year' in kwargs.keys():
 		    sql = ("SELECT * from `{0}` WHERE `year`={1}").format(table, kwargs['year'])
 		elif 'mooringid' in kwargs.keys():
 		    sql = ("SELECT * from `{0}` WHERE `mooringid`='{1}'").format(table, kwargs['mooringid'])
-		elif ('mooringid' in kwargs.keys()) and ('year' in kwargs.keys()):
-		    sql = ("SELECT * from `{0}` WHERE `mooringid`='{1}' and `year`={2}").format(table, kwargs['mooringid'], kwargs['year'])
-
+		else:
+		    sql = ("SELECT * from `{0}` ").format(table)
 
 		if verbose:
 		    print sql
