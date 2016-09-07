@@ -95,13 +95,13 @@ class EcoFOCI_db_datastatus(object):
 		"""build sql call based on kwargs"""
 
 		if ('mooringid' in kwargs.keys()) and ('year' in kwargs.keys()):
-		    sql = ("SELECT * from `{0}` WHERE `mooringid`='{1}' and `year`={2}").format(table, kwargs['mooringid'], kwargs['year'])
+		    sql = ("SELECT * FROM `{0}` WHERE `mooringid`='{1}' and `year`={2}").format(table, kwargs['mooringid'], kwargs['year'])
 		elif 'year' in kwargs.keys():
-		    sql = ("SELECT * from `{0}` WHERE `year`={1}").format(table, kwargs['year'])
+		    sql = ("SELECT * FROM `{0}` WHERE `year`={1}").format(table, kwargs['year'])
 		elif 'mooringid' in kwargs.keys():
-		    sql = ("SELECT * from `{0}` WHERE `mooringid`='{1}'").format(table, kwargs['mooringid'])
+		    sql = ("SELECT * FROM `{0}` WHERE `mooringid`='{1}'").format(table, kwargs['mooringid'])
 		else:
-		    sql = ("SELECT * from `{0}` ").format(table)
+		    sql = ("SELECT * FROM `{0}` ").format(table)
 
 		if verbose:
 		    print sql

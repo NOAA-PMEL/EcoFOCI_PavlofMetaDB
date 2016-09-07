@@ -112,3 +112,22 @@ ID='11chukchi3'
 sites='11ckp3a 11ckt3a 11ckip3a'
 python ${prog_dir}EcoRAIDMooringMetaData2ptr.py ${ID} ${year} ${sys_path} ${sites} >> ${out_dir}${ID}.ptr
 
+###
+#
+# 2010
+#
+###
+year=2010
+
+ID='10chukchi1'
+sites='10ckp1a 10ckt1a 10ckip1a'
+python ${prog_dir}EcoRAIDMooringMetaData2ptr.py ${ID} ${year} ${sys_path} ${sites} >> ${out_dir}${ID}.ptr
+
+ID='10chukchi2'
+sites='10ckp2a 10ckt2a 10ckip2a'
+python ${prog_dir}EcoRAIDMooringMetaData2ptr.py ${ID} ${year} ${sys_path} ${sites} >> ${out_dir}${ID}.ptr
+
+ID='10chukchi3'
+sites='10ckp3a 10ckt3a 10ckip3a'
+python ${prog_dir}EcoRAIDMooringMetaData2ptr.py ${ID} ${year} ${sys_path} ${sites} >> ${out_dir}${ID}.ptr
+
