@@ -5,7 +5,10 @@
  
  Populates Database with status of mooring processing from ecoraid archive
 
- Using Anaconda packaged Python 
+ History
+ -------
+
+ 2016-09-08 - begin migrating database calls to EcoFOCI_db_io subroutine and class
 """
 
 import os
@@ -19,6 +22,7 @@ from netCDF4 import Dataset #netcdf usage
 import numpy as np
 
 #User Stack
+import io_utils.EcoFOCI_db_io
 import io_utils.ConfigParserLocal as ConfigParserLocal
 
 __author__   = 'Shaun Bell'
@@ -47,17 +51,6 @@ def walk_dir(search_dir, ncEnding='.nc'):
 
 
 """--------------------------------SQL Init----------------------------------------"""
-
-def connect_to_DB(host, user, password, database, port):
-    # Open database connection
-    try:
-        db = pymysql.connect(host, user, password, database, port)
-    except:
-        print "db error"
-        
-    # prepare a cursor object using cursor() method
-    cursor = db.cursor(pymysql.cursors.DictCursor)
-    return(db,cursor)
     
 
 def add_to_DB(db,cursor,table,data_dic):
@@ -126,16 +119,14 @@ if args.datatype not in ['Moorings','CTDCasts','AlongTrack']:
 
 insttype = ['sc','s37','s39','s56','mt','wpak','an7','an9','an11','ecf','adcp','wcp','lrcp','isus','suna','']
 
-#get information from local config file - a json formatted file
-db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_datastatus.pyini')
-
 ### Get list of NCFiles
 nc_path = args.nc_path + args.nc_path_year + '/'
 nc_dir, ncfileonly = walk_dir(nc_path, ncEnding='.nc')
 
 if args.datatype.lower() == 'moorings':
     ### connect to DB
-    (db,cursor) = connect_to_DB(db_config['host'], db_config['user'], db_config['password'], db_config['database'], db_config['port'])
+    dbinstance = EcoFOCI_db_io.EcoFOCI_db_datastatus()
+    (db,cursor) = dbinstance.connect_to_DB('../db_connection_config_files/db_config_datastatus.pyini')
 
     #build and look for initial data first
     for i, nc_file in enumerate(nc_dir): 
