@@ -125,6 +125,59 @@ class EcoFOCI_db_datastatus(object):
 		except:
 		    print "Error: unable to fecth data"
 
+	def read_mooring_summary(self, table=None, verbose=False, **kwargs):
+		""" output is mooringID indexed """
+		if 'mooringid' in kwargs.keys():
+		    sql = ("SELECT * FROM `{0}` WHERE `MooringID`='{1}'").format(table, kwargs['mooringid'])
+		else:
+		    sql = ("SELECT * FROM `{0}` ").format(table)
+
+		if verbose:
+		    print sql
+
+		result_dic = {}
+		try:
+		    # Execute the SQL command
+		    self.cursor.execute(sql)
+		    # Get column names
+		    rowid = {}
+		    counter = 0
+		    for i in self.cursor.description:
+		        rowid[i[0]] = counter
+		        counter = counter +1 
+		    #print rowid
+		    # Fetch all the rows in a list of lists.
+		    results = self.cursor.fetchall()
+		    for row in results:
+		        result_dic[row['MooringID']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
+		    return (result_dic)
+		except:
+		    print "Error: unable to fecth data"
+
+	def read_mooring_inst(self, table=None, verbose=False, mooringid=None, isdeployed='y'):
+		sql = ("SELECT * from `{0}` WHERE `MooringID`= '{1}' and `Deployed` = '{2}' Order By `Depth`").format(table, mooringid, isdeployed)
+
+		if verbose:
+		    print sql
+
+		result_dic = {}
+		try:
+		    # Execute the SQL command
+		    cursor.execute(sql)
+		    # Get column names
+		    rowid = {}
+		    counter = 0
+		    for i in cursor.description:
+		        rowid[i[0]] = counter
+		        counter = counter +1 
+		    #print rowid
+		    # Fetch all the rows in a list of lists.
+		    results = cursor.fetchall()
+		    for row in results:
+		        result_dic[row['InstType']+row['SerialNo']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
+		    return (result_dic)
+		except:
+		    print "Error: unable to fecth data"
 
 	def close(self):
 		"""close database"""
