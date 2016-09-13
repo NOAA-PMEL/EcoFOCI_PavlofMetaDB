@@ -1,0 +1,31 @@
+# data directory contents #
+###########################
+
+*.xls
+*.xlsx
+*.csv
+# *.nc
+*.cdf
+*.download
+
+# compiled files #
+##################
+
+**/*.pyc
+*.pyc
+
+
+# image files #
+###############
+
+*.png
+**/*.png
+*.svg
+
+# System OS files #
+###################
+
+.DS_Store
+*.DS_Store
+
+*.pyc

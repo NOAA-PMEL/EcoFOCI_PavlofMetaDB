@@ -64,13 +64,12 @@ else:
 
 EcoFOCI_db = EcoFOCI_db_datastatus()
 (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
-data = EcoFOCI_db.read_table(table='mooringdeploymentlogs')
 
 #get db meta information for mooring
 table = 'mooringdeployedinstruments'
-Mooring_Meta_inst = EcoFOCI_db.read_mooring_summary(table=table, mooringid=args.MooringID)
+Mooring_Meta_inst = EcoFOCI_db.read_mooring_inst(table=table, mooringid=args.MooringID, verbose=True)
 table = 'mooringdeploymentlogs'
-Mooring_Meta_sum = EcoFOCI_db.read_mooring_summary(table=table, mooringid=args.MooringID)
+Mooring_Meta_sum = EcoFOCI_db.read_mooring_summary(table=table, mooringid=args.MooringID, verbose=True)
 table = 'mooringrecoverylogs'
 Mooring_recovery_sum = EcoFOCI_db.read_mooring_summary(table=table, mooringid=args.MooringID)
 table = 'mooringdeploymentnotes'

@@ -155,7 +155,8 @@ class EcoFOCI_db_datastatus(object):
 		    print "Error: unable to fecth data"
 
 	def read_mooring_inst(self, table=None, verbose=False, mooringid=None, isdeployed='y'):
-		sql = ("SELECT * from `{0}` WHERE `MooringID`= '{1}' and `Deployed` = '{2}' Order By `Depth`").format(table, mooringid, isdeployed)
+		"""specific to get deployed instruments"""
+		sql = ("SELECT * from `{0}` WHERE `MooringID`='{1}' AND `Deployed` = '{2}' Order By `Depth`").format(table, mooringid, isdeployed)
 
 		if verbose:
 		    print sql
@@ -163,16 +164,16 @@ class EcoFOCI_db_datastatus(object):
 		result_dic = {}
 		try:
 		    # Execute the SQL command
-		    cursor.execute(sql)
+		    self.cursor.execute(sql)
 		    # Get column names
 		    rowid = {}
 		    counter = 0
-		    for i in cursor.description:
+		    for i in self.cursor.description:
 		        rowid[i[0]] = counter
 		        counter = counter +1 
 		    #print rowid
 		    # Fetch all the rows in a list of lists.
-		    results = cursor.fetchall()
+		    results = self.cursor.fetchall()
 		    for row in results:
 		        result_dic[row['InstType']+row['SerialNo']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
 		    return (result_dic)
