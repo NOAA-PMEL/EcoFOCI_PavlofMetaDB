@@ -131,6 +131,7 @@ class MooringGeoLoc(object):
 
 	def output_csv(self):
 		"""sort and output to screen"""
+		print "MooringID,Latitude,Longitude"
 		for i in sorted(self.dicdata.keys()):
 			print "{mooringid},{Latitude},{Longitude}".format(mooringid=i, **self.dicdata[i])
 
@@ -162,13 +163,15 @@ args = parser.parse_args()
 
 
 EcoFOCI_db = EcoFOCI_db_datastatus()
-config_file = '/Volumes/WDC_internal/Users/bell/Programs/Python/db_connection_config_files/db_config_mooring.pyini'
+config_file = 'EcoFOCI_config/db_config/db_config_mooring.pyini'
 (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
 data = EcoFOCI_db.read_table(table='mooringdeploymentlogs')
 EcoFOCI_db.close()
 
 if args.csv:
-	pass
+	instance = MooringGeoLoc(data)
+	instance.LatLonDM2DD(lonpos='E')
+	instance.output_csv()
 
 if args.geojson:
 	instance = MooringGeoLoc(data)
