@@ -90,7 +90,7 @@ class MooringGeoLoc(object):
 				if templat[2] == latpos:
 					self.dicdata[i]['Latitude'] = float(templat[0]) + float(templat[1]) / 60.
 				else:
-					self.dicdata[i]['Latitude'] = -1. * float(templat[0]) + float(templat[1]) / 60.
+					self.dicdata[i]['Latitude'] = -1. * ( float(templat[0]) + float(templat[1]) / 60. )
 			except:
 				try:
 					templat = self.dicdata[i]['PreLatitude'].strip().split()
@@ -102,7 +102,7 @@ class MooringGeoLoc(object):
 					elif templat[2] == latpos:
 						self.dicdata[i]['Latitude'] = float(templat[0]) + float(templat[1]) / 60.
 					else:
-						self.dicdata[i]['Latitude'] = -1. * float(templat[0]) + float(templat[1]) / 60.
+						self.dicdata[i]['Latitude'] = -1. * ( float(templat[0]) + float(templat[1]) / 60. )
 				except:
 					self.dicdata.pop(i, None)
 					continue
@@ -112,7 +112,7 @@ class MooringGeoLoc(object):
 				if templon[2] == lonpos:
 					self.dicdata[i]['Longitude'] = float(templon[0]) + float(templon[1]) / 60.
 				else:
-					self.dicdata[i]['Longitude'] = -1. * float(templon[0]) + float(templon[1]) / 60.
+					self.dicdata[i]['Longitude'] = -1. * ( float(templon[0]) + float(templon[1]) / 60. )
 			except:
 				try:
 					templon = self.dicdata[i]['PreLongitude'].strip().split()
@@ -124,7 +124,7 @@ class MooringGeoLoc(object):
 					elif templon[2] == lonpos:
 						self.dicdata[i]['Longitude'] = float(templon[0]) + float(templon[1]) / 60.
 					else:
-						self.dicdata[i]['Longitude'] = -1. * float(templon[0]) + float(templon[1]) / 60.
+						self.dicdata[i]['Longitude'] = -1. * ( float(templon[0]) + float(templon[1]) / 60. )
 				except:
 					self.dicdata.pop(i, None)
 					continue
