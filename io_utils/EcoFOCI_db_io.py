@@ -91,7 +91,7 @@ class EcoFOCI_db_datastatus(object):
 		self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 		return(self.db,self.cursor)
 
-	def read_table(self, table=None, verbose=False, **kwargs):
+	def read_table(self, table=None, verbose=False, index_str='id', **kwargs):
 		"""build sql call based on kwargs"""
 
 		if ('mooringid' in kwargs.keys()) and ('year' in kwargs.keys()):
@@ -120,7 +120,7 @@ class EcoFOCI_db_datastatus(object):
 		    # Fetch all the rows in a list of lists.
 		    results = self.cursor.fetchall()
 		    for row in results:
-		        result_dic[row['id']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
+		        result_dic[row[index_str]] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
 		    return (result_dic)
 		except:
 		    print "Error: unable to fecth data"

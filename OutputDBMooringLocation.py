@@ -33,7 +33,7 @@ __status__   = "Development"
 
 """------------------------------------------------------------------------------------"""
 
-#TODO: Move class below to seperate tools
+#TODO: Move classes below to seperate tools
 
 class MooringGeoLoc(object):
 	
@@ -134,6 +134,16 @@ class MooringGeoLoc(object):
 		print "MooringID,Latitude,Longitude"
 		for i in sorted(self.dicdata.keys()):
 			print "{mooringid},{Latitude},{Longitude}".format(mooringid=i, **self.dicdata[i])
+
+	def output_csv_tableau(self):
+		"""Initially inteded for a tableau visualization.  The purpose is to identify the collection of
+		individual moorings deployed at a consistent site location.
+
+		TODO:
+
+		"""
+		#get the official desginatio of the mooring without the year id
+		pass
 
 	def output_kml(self):
 		"""TODO: output data in kml friendly format for GoogleEarth"""
