@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
- mysql_mooring_summary.py
+ DBMooringSummary.py
  
  Input: MooringID (eg. 14bsm2a or 14BSM-2A)
  Output: text file with...
