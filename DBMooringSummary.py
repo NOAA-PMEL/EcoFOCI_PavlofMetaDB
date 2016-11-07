@@ -133,6 +133,7 @@ else:
     print("Cruise:\t\t{0}".format(Mooring_Meta_sum[args.MooringID]['CruiseNumber']))
     print("Latitude:\t{0}".format(Mooring_Meta_sum[args.MooringID]['Latitude']))
     print("Longitude:\t{0}".format(Mooring_Meta_sum[args.MooringID]['Longitude']))
+    print("Deployment Depth:\t{0}m\n".format(Mooring_Meta_sum[args.MooringID]['DeploymentDepth']))
     print("DeploymentDateTimeGMT:\t{0}\n".format(Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT']))
     print("RecoveryDateTimeGMT:\t{0}".format(Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT']))
 
