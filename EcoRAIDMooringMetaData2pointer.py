@@ -1,7 +1,7 @@
 #!/usr/bin/env
 
 """
- EcoRAIDMooringMetaData2ptr.py
+ EcoRAIDMooringMetaData2pointer.py
  
  Purpose:
  --------
