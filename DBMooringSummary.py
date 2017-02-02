@@ -148,9 +148,9 @@ Processed by:
 DATA SUMMARY
 ============
 
-Instrument\tSerial \t\tDepth\t\t   Data   \t\tNotes
-          \tNumber \t\t     \t\t   Status \t\t 
-----------\t-------\t\t-----\t\t----------\t\t------
+Instrument\tSerial \t\tDepth\t\tDepth\t\t   Data   \t\tNotes
+          \tNumber \t\t(est)\t\t(act)\t\t   Status \t\t 
+----------\t-------\t\t-----\t\t-----\t\t----------\t\t------
     """)
             
     for instrument in sorted(Mooring_Meta_inst.keys()):
@@ -176,9 +176,9 @@ Instrument\tSerial \t\tDepth\t\t   Data   \t\tNotes
         if ('Flotation' in Mooring_Meta_inst[instrument]['InstType']):
             Mooring_Meta_inst[instrument]['InstType'] = 'float' 
 
-        print ("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}").format(
+        print ("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}\t\t{5}").format(
         Mooring_Meta_inst[instrument]['InstType'],Mooring_Meta_inst[instrument]['SerialNo'], Mooring_Meta_inst[instrument]['Depth'],
-        Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes'])
+        Mooring_Meta_inst[instrument]['ActualDepth'],Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes'])
 
     print("""
 
