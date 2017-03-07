@@ -29,3 +29,6 @@
 *.DS_Store
 
 *.pyc
+
+# folders #
+EcoFOCI_config/db_config
