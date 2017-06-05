@@ -16,7 +16,6 @@ import sys
 
 # System Stack
 import argparse
-import pymysql
 
 #User Stack
 import io_utils.ConfigParserLocal as ConfigParserLocal
