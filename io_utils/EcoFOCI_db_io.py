@@ -184,3 +184,121 @@ class EcoFOCI_db_datastatus(object):
 		"""close database"""
 		self.db.close()
 
+class EcoFOCI_db_ProfileData(object):
+	"""Class definitions to access EcoFOCI Profile Data Database"""
+
+	def connect_to_DB(self, db_config_file=None):
+		"""Try to establish database connection
+
+		Parameters
+		----------
+		db_config_file : str
+		    full path to json formatted database config file    
+
+		"""
+		self.db_config = ConfigParserLocal.get_config(db_config_file)
+		try:
+		    self.db = pymysql.connect(self.db_config['host'], 
+		    						  self.db_config['user'],
+		    						  self.db_config['password'], 
+		    						  self.db_config['database'], 
+		    						  self.db_config['port'])
+		except:
+		    print "db error"
+		    
+		# prepare a cursor object using cursor() method
+		self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
+		return(self.db,self.cursor)
+
+	def manual_connect_to_DB(self, host='localhost', user='viewer', 
+							 password=None, database='ecofoci', port=3306):
+		"""Try to establish database connection
+
+		Parameters
+		----------
+		host : str
+		    ip or domain name of host
+		user : str
+			account user
+		password : str
+			account password
+		database : str
+			database name to connect to
+		port : int
+			database port
+
+		"""	    
+		self.db_config['host'] = host
+		self.db_config['user'] = user
+		self.db_config['password'] = password
+		self.db_config['database'] = database
+		self.db_config['port'] = port
+
+		try:
+		    self.db = pymysql.connect(self.db_config['host'], 
+		    						  self.db_config['user'],
+		    						  self.db_config['password'], 
+		    						  self.db_config['database'], 
+		    						  self.db_config['port'])
+		except:
+		    print "db error"
+		    
+		# prepare a cursor object using cursor() method
+		self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
+		return(self.db,self.cursor)
+
+	def create_table(self, tablename, vars_list):
+
+		sql = """CREATE TABLE `{tablename}` (
+			  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			  `ProfileID` varchar(6) DEFAULT '' COMMENT 'ctdxxx',
+			  `ProfileTime` datetime DEFAULT NULL,
+			  `DataStatus` enum('preliminary','final') NOT NULL DEFAULT 'preliminary',
+			  `LatitudeLongitude` point DEFAULT NULL,""".format(tablename=tablename)
+
+		for varname in vars_list:
+			if not varname in ['time','time2']:
+				sql = sql + """`{variable}` float DEFAULT NULL,""".format(variable=varname)
+
+		sql = sql + """
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;"""
+
+		try:
+		    # Execute the SQL command
+		    self.cursor.execute(sql)
+		except:
+			print("Failed to create table")
+
+	def add_ctd_profile(self, tablename, castno, data, datetime='0000-00-00 00:00:00'):
+
+		data.pop('time', None)
+		data.pop('time2', None)
+		lat = data.pop('lat', None)
+		lon = data.pop('lon', None)
+
+		placeholders = ', '.join(['%s'] * (len(data)+4)) + ', ST_GeomFromText(%s)' #lat,lon,time,castno,geom_latlon are added after data
+		columns = ', '.join(data.keys() + ['lat','lon','ProfileTime','ProfileID','LatitudeLongitude'])
+
+		sql = """INSERT INTO {tablename} ({columns}) VALUES({placeholders}) """.format(tablename=tablename,placeholders=placeholders,columns=columns)
+
+		for rindex in range(0,len(data['dep'])):
+			sql_data = []
+			for k,v in data.iteritems():
+				try:
+					sql_data = sql_data + [str(data[k][0,rindex,0,0])]
+				except:
+					sql_data = sql_data + [str(data[k][rindex])]
+			sql_data = sql_data + [str(lat[0]),str(lon[0]),datetime,'ctd'+str(castno),'POINT('+str(lat[0])+' '+str(lon[0])+')']
+
+			try:
+			    # Execute the SQL command
+				self.cursor.execute(sql, sql_data)
+				self.db.commit()
+			except pymysql.Error as error: 
+				print("Error: {}".format(error))
+				self.db.rollback()
+
+	def close(self):
+		"""close database"""
+		self.db.close()
