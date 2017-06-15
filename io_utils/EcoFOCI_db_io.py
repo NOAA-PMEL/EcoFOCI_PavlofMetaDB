@@ -247,6 +247,81 @@ class EcoFOCI_db_ProfileData(object):
 		self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 		return(self.db,self.cursor)
 
+	def read_profile(self, table=None, ProfileID=None, verbose=False):
+		
+		sql = ("SELECT * from `{0}` WHERE `ProfileID`= '{1}' ORDER BY `id` DESC ").format(table, ProfileID)
+
+		if verbose:
+			print sql
+
+		result_dic = {}
+		try:
+			# Execute the SQL command
+			self.cursor.execute(sql)
+			# Get column names
+			rowid = {}
+			counter = 0
+			for i in self.cursor.description:
+				rowid[i[0]] = counter
+				counter = counter +1 
+			#print rowid
+			# Fetch all the rows in a list of lists.
+			results = self.cursor.fetchall()
+			for row in results:
+				result_dic[row['dep']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
+			return (result_dic)
+		except:
+			print "Error: unable to fetch data"
+
+	def count(self, table=None, start=None, end=None, verbose=False):
+		sql = ("SELECT count(*) FROM (SELECT * FROM `{table}` where ProfileID between"
+			   " '{start}' and '{end}' group by `ProfileID`) as temp").format(table=table, start=start, end=end)
+
+		if verbose:
+			print sql	
+
+		try:
+			# Execute the SQL command
+			self.cursor.execute(sql)
+			# Get column names
+			rowid = {}
+			counter = 0
+			for i in self.cursor.description:
+				rowid[i[0]] = counter
+				counter = counter +1 
+			#print rowid
+			# Fetch all the rows in a list of lists.
+			results = self.cursor.fetchall()
+			return results[0]['count(*)']
+		except:
+			print "Error: unable to fetch data"
+
+	def get_distance(self, ref_lat, ref_lon, ProfileID_end):
+		sql = """SELECT (
+		  6371 * acos(
+		    cos(radians({ref_lat})) * cos(radians(x(LatitudeLongitude))) * cos(radians(y(LatitudeLongitude)) - radians({ref_lon}))
+		    +
+		    sin(radians({ref_lat})) * sin(radians(x(LatitudeLongitude)))
+		  )
+		) AS distance
+		FROM dy1606 WHERE id={id};""".format(ref_lat=ref_lat,ref_lon=ref_lon,id=ProfileID_end)
+
+		try:
+			# Execute the SQL command
+			self.cursor.execute(sql)
+			# Get column names
+			rowid = {}
+			counter = 0
+			for i in self.cursor.description:
+				rowid[i[0]] = counter
+				counter = counter +1 
+			#print rowid
+			# Fetch all the rows in a list of lists.
+			results = self.cursor.fetchall()
+			return results[0]['distance']
+		except:
+			print "Error: unable to fetch data"
+
 	def create_table(self, tablename, vars_list):
 
 		sql = """CREATE TABLE `{tablename}` (
