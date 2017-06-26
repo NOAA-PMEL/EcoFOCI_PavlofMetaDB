@@ -52,6 +52,7 @@ parser = argparse.ArgumentParser(description='SBE mooring report')
 parser.add_argument('ctd_file', metavar='ctd_file', type=str, help='Path to CTD file')               
 parser.add_argument('-db', '--db_ini', type=str, help='path to db .pyini file')               
 parser.add_argument('-c', '--create_table',  action="store_true", help='create new table')               
+parser.add_argument('-f', '--isfinal',  action="store_true", help='flag if final data')               
 
 args = parser.parse_args()
     
@@ -60,6 +61,11 @@ if args.db_ini:
     config_file = args.db_ini
 else:
     config_file = 'EcoFOCI_config/db_config/db_config_profiledata.pyini'
+
+if args.isfinal:
+    DataStatus='final'
+else:
+    DataStatus = 'preliminary'
 
 #read in netcdf data file
 df = EcoFOCI_netCDF(args.ctd_file)
@@ -82,6 +88,10 @@ else:
     EcoFOCI_db = EcoFOCI_db_ProfileData()
     (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
 
-    EcoFOCI_db.add_ctd_profile(tablename=global_atts['CRUISE'], castno=global_atts['CAST'], data=data, datetime=str_time)
+    EcoFOCI_db.add_ctd_profile(tablename=global_atts['CRUISE'], 
+                                castno=global_atts['CAST'], 
+                                data=data, 
+                                datetime=str_time,
+                                DataStatus=DataStatus)
 
     EcoFOCI_db.close()

@@ -345,15 +345,15 @@ class EcoFOCI_db_ProfileData(object):
 		except:
 			print("Failed to create table")
 
-	def add_ctd_profile(self, tablename, castno, data, datetime='0000-00-00 00:00:00'):
+	def add_ctd_profile(self, tablename, castno, data, datetime='0000-00-00 00:00:00', DataStatus='preliminary'):
 
 		data.pop('time', None)
 		data.pop('time2', None)
 		lat = data.pop('lat', None)
 		lon = data.pop('lon', None)
 
-		placeholders = ', '.join(['%s'] * (len(data)+4)) + ', ST_GeomFromText(%s)' #lat,lon,time,castno,geom_latlon are added after data
-		columns = ', '.join(data.keys() + ['lat','lon','ProfileTime','ProfileID','LatitudeLongitude'])
+		placeholders = ', '.join(['%s'] * (len(data)+5)) + ', ST_GeomFromText(%s)' #lat,lon,time,castno,geom_latlon are added after data
+		columns = ', '.join(data.keys() + ['lat','lon','ProfileTime','ProfileID','DataStatus','LatitudeLongitude'])
 
 		sql = """INSERT INTO {tablename} ({columns}) VALUES({placeholders}) """.format(tablename=tablename,placeholders=placeholders,columns=columns)
 
@@ -364,8 +364,10 @@ class EcoFOCI_db_ProfileData(object):
 					sql_data = sql_data + [str(data[k][0,rindex,0,0])]
 				except:
 					sql_data = sql_data + [str(data[k][rindex])]
-			sql_data = sql_data + [str(lat[0]),str(lon[0]),datetime,'ctd'+str(castno),'POINT('+str(lat[0])+' '+str(lon[0])+')']
-
+			if 'ctd' in castno:
+				sql_data = sql_data + [str(lat[0]),str(lon[0]),datetime,str(castno),DataStatus,'POINT('+str(lat[0])+' '+str(lon[0])+')']
+			else:
+				sql_data = sql_data + [str(lat[0]),str(lon[0]),datetime,'ctd'+str(castno),DataStatus,'POINT('+str(lat[0])+' '+str(lon[0])+')']
 			try:
 			    # Execute the SQL command
 				self.cursor.execute(sql, sql_data)
