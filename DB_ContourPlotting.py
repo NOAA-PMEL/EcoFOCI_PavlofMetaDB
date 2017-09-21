@@ -8,7 +8,7 @@
  
  Purpose:
  --------
- Various routines for visualizing ALAMO data
+ Various routines for visualizing CTD data
 
  History:
  --------
@@ -85,7 +85,7 @@ parser.add_argument('--maxdepth', type=float, default=70,
 parser.add_argument('--paramspan', nargs='+', type=float, 
 	help="max,min of parameter")
 parser.add_argument('-cruiseid','--cruiseid', type=str,
-	help='work with alamo float data in sql database')
+	help='work with ctd data in sql database')
 parser.add_argument('-castno','--castno', type=int, nargs=2,
 	help='start and stop range for cast number')
 parser.add_argument('-plot_cbz','--plot_cb_zero', type=float, 
