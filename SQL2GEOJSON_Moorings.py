@@ -56,7 +56,6 @@ for a_ind in data_mooring.keys():
     if (data_mooring[a_ind]['Latitude'] == '') or (data_mooring[a_ind]['Latitude'] == 'NOT DEPLOYED') or not(data_mooring[a_ind]['Latitude']):
         data_mooring[a_ind]['Latitude'] = '00 0.00 N'
         data_mooring[a_ind]['Longitude'] = '00 0.00 W'
-    print data_mooring[a_ind]['Latitude'], data_mooring[a_ind]['Longitude']
 
 mooring_lat = np.array([float(data_mooring[a_ind]['Latitude'].split()[0]) + float(data_mooring[a_ind]['Latitude'].split()[1])/60.0 for a_ind in data_mooring.keys()])
 mooring_lon = np.array([-1.0*(float(data_mooring[a_ind]['Longitude'].split()[0]) + float(data_mooring[a_ind]['Longitude'].split()[1])/60.0) for a_ind in data_mooring.keys()])
