@@ -60,7 +60,7 @@ args = parser.parse_args()
 if args.db_ini:
     config_file = args.db_ini
 else:
-    config_file = 'EcoFOCI_config/db_config/db_config_profiledata.pyini'
+    config_file = 'EcoFOCI_config/db_config/db_config_profiledata.yaml'
 
 if args.isfinal:
     DataStatus='final'
@@ -79,14 +79,14 @@ str_time = dt_from_epic[0].strftime('%Y-%m-%d %H:%M:%S')
 
 if args.create_table:
     EcoFOCI_db = EcoFOCI_db_ProfileData()
-    (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
+    (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file,ftype='yaml')
 
     EcoFOCI_db.create_table(tablename=global_atts['CRUISE'], vars_list=vars_dic.keys())
 
     EcoFOCI_db.close()
 else:
     EcoFOCI_db = EcoFOCI_db_ProfileData()
-    (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
+    (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file,ftype='yaml')
 
     EcoFOCI_db.add_ctd_profile(tablename=global_atts['CRUISE'], 
                                 castno=global_atts['CAST'], 

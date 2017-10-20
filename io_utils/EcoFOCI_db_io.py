@@ -191,7 +191,7 @@ class EcoFOCI_db_datastatus(object):
 class EcoFOCI_db_ProfileData(object):
 	"""Class definitions to access EcoFOCI Profile Data Database"""
 
-	def connect_to_DB(self, db_config_file=None):
+	def connect_to_DB(self, db_config_file=None,ftype='yaml'):
 		"""Try to establish database connection
 
 		Parameters
@@ -200,9 +200,9 @@ class EcoFOCI_db_ProfileData(object):
 			full path to json formatted database config file    
 
 		"""
-		self.db_config = ConfigParserLocal.get_config(db_config_file)
+		self.db_config = ConfigParserLocal.get_config(db_config_file,ftype=ftype)
 		try:
-			self.db = pymysql.connect(self.db_config['host'], 
+			self.db = mysql.connector.connect(self.db_config['host'], 
 									  self.db_config['user'],
 									  self.db_config['password'], 
 									  self.db_config['database'], 
@@ -211,7 +211,7 @@ class EcoFOCI_db_ProfileData(object):
 			print "db error"
 			
 		# prepare a cursor object using cursor() method
-		self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
+		self.cursor = self.db.cursor(mysql.connector.cursors.DictCursor)
 		return(self.db,self.cursor)
 
 	def manual_connect_to_DB(self, host='localhost', user='viewer', 
@@ -239,7 +239,7 @@ class EcoFOCI_db_ProfileData(object):
 		self.db_config['port'] = port
 
 		try:
-			self.db = pymysql.connect(self.db_config['host'], 
+			self.db = mysql.connector.connect(self.db_config['host'], 
 									  self.db_config['user'],
 									  self.db_config['password'], 
 									  self.db_config['database'], 
@@ -248,7 +248,7 @@ class EcoFOCI_db_ProfileData(object):
 			print "db error"
 			
 		# prepare a cursor object using cursor() method
-		self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
+		self.cursor = self.db.cursor(mysql.connector.cursors.DictCursor)
 		return(self.db,self.cursor)
 
 	def read_profile(self, table=None, ProfileID=None, verbose=False):
@@ -376,7 +376,7 @@ class EcoFOCI_db_ProfileData(object):
 				# Execute the SQL command
 				self.cursor.execute(sql, sql_data)
 				self.db.commit()
-			except pymysql.Error as error: 
+			except mysql.connector.Error as error: 
 				print("Error: {}".format(error))
 				self.db.rollback()
 
