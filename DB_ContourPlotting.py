@@ -77,7 +77,7 @@ class MidpointNormalize(colors.Normalize):
 
 """----------------------------- Main -------------------------------------"""
 
-parser = argparse.ArgumentParser(description='ArcticHeat ctd datafile parser ')
+parser = argparse.ArgumentParser(description='Cruise ctd datafile parser ')
 parser.add_argument('filepath', metavar='filepath', type=str,
 			   help='full path to file')
 parser.add_argument('--maxdepth', type=float, default=70, 
@@ -88,12 +88,14 @@ parser.add_argument('-cruiseid','--cruiseid', type=str,
 	help='work with ctd data in sql database')
 parser.add_argument('-castno','--castno', type=int, nargs=2,
 	help='start and stop range for cast number')
-parser.add_argument('-plot_cbz','--plot_cb_zero', type=float, 
-	help='Colorbar inflection value for divergent color scheme')
+parser.add_argument('-castorder','--castorder', type=int, nargs='+',
+	help='list of cast numbers in order to be plotted')
 parser.add_argument('-time','--time', action="store_true",
 	help='create a contour plot with time as the x-axis')
 parser.add_argument('-distance','--distance', action="store_true",
 	help='create a contour plot with distance as the x-axis')
+parser.add_argument('--bylat', action="store_true",
+	help='plot x as a function of lat')
 args = parser.parse_args()
 
 
@@ -163,8 +165,6 @@ if args.time:
 
 if args.distance:
 
-	startcycle=args.castno[0]
-	endcycle=args.castno[1]
 
 	#get information from local config file - a json formatted file
 	config_file = 'EcoFOCI_config/db_config/db_config_profiledata.pyini'
@@ -173,15 +173,28 @@ if args.distance:
 	EcoFOCI_db = EcoFOCI_db_ProfileData()
 	(db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file)
 
-	depth_array = np.arange(0,args.maxdepth+1,0.5) 
-	num_cycles = EcoFOCI_db.count(table=args.cruiseid, start='ctd'+str(startcycle).zfill(3), end='ctd'+str(endcycle).zfill(3), verbose=True)
-	temparray = np.ones((num_cycles,len(depth_array)))*np.nan
-	ProfileTime = []
-	cycle_col=0
+	if args.castno:
+		startcycle=args.castno[0]
+		endcycle=args.castno[1]
+		depth_array = np.arange(0,args.maxdepth+1,0.5) 
+		num_cycles = EcoFOCI_db.count(table=args.cruiseid, start='ctd'+str(startcycle).zfill(3), end='ctd'+str(endcycle).zfill(3), verbose=True)
+		temparray = np.ones((num_cycles,len(depth_array)))*np.nan
+		ProfileTime = []
+		cycle_col=0
+		cycle_range = range(startcycle,endcycle+1,1)
+	if args.castorder:
+		startcycle=args.castorder[0]
+		depth_array = np.arange(0,args.maxdepth+1,0.5) 
+		num_cycles = len(args.castorder)
+		temparray = np.ones((num_cycles,len(depth_array)))*np.nan
+		ProfileTime = []
+		cycle_col=0
+		cycle_range = args.castorder
+
 
 	fig = plt.figure(1, figsize=(12, 3), facecolor='w', edgecolor='w')
 	ax1 = fig.add_subplot(111)		
-	for cycle in range(startcycle,endcycle+1,1):
+	for cycle in cycle_range:
 		#get db meta information for mooring
 		cyclestr = 'ctd'+str(cycle).zfill(3)
 		Profile = EcoFOCI_db.read_profile(table=args.cruiseid, ProfileID=cyclestr, verbose=True)
@@ -190,7 +203,7 @@ if args.distance:
 			ref_lat = Profile[sorted(Profile.keys())[0]]['lat']
 			ref_lon = Profile[sorted(Profile.keys())[0]]['lon']
 		#try:
-		distance = EcoFOCI_db.get_distance(ref_lat, ref_lon, Profile[sorted(Profile.keys())[0]]['id'])
+		distance = EcoFOCI_db.get_distance(args.cruiseid, ref_lat, ref_lon, Profile[sorted(Profile.keys())[0]]['id'])
 		ProfileTime = ProfileTime + [distance]
 		Pressure = np.array(sorted(Profile.keys()))
 		Temperature = np.array([Profile[x]['T_28'] for x in sorted(Profile.keys()) ])

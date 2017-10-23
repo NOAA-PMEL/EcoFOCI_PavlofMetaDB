@@ -295,7 +295,7 @@ class EcoFOCI_db_ProfileData(object):
 		except:
 			print "Error: unable to fetch data"
 
-	def get_distance(self, ref_lat, ref_lon, ProfileID_end):
+	def get_distance(self, table, ref_lat, ref_lon, ProfileID_end):
 		sql = """SELECT (
 		  6371 * acos(
 			cos(radians({ref_lat})) * cos(radians(x(LatitudeLongitude))) * cos(radians(y(LatitudeLongitude)) - radians({ref_lon}))
@@ -303,7 +303,7 @@ class EcoFOCI_db_ProfileData(object):
 			sin(radians({ref_lat})) * sin(radians(x(LatitudeLongitude)))
 		  )
 		) AS distance
-		FROM dy1606 WHERE id={id};""".format(ref_lat=ref_lat,ref_lon=ref_lon,id=ProfileID_end)
+		FROM {table} WHERE id={id};""".format(ref_lat=ref_lat,ref_lon=ref_lon,table=table,id=ProfileID_end)
 
 		try:
 			# Execute the SQL command
