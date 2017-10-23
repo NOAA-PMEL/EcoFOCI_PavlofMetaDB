@@ -200,18 +200,25 @@ class EcoFOCI_db_ProfileData(object):
 			full path to json formatted database config file    
 
 		"""
-		self.db_config = ConfigParserLocal.get_config(db_config_file,ftype=ftype)
+		db_config = ConfigParserLocal.get_config(db_config_file,ftype=ftype)
 		try:
-			self.db = mysql.connector.connect(self.db_config['host'], 
-									  self.db_config['user'],
-									  self.db_config['password'], 
-									  self.db_config['database'], 
-									  self.db_config['port'])
-		except:
-			print "db error"
-			
+			self.db = mysql.connector.connect(**db_config)
+		except mysql.connector.Error as err:
+		  """
+		  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+			print("Something is wrong with your user name or password")
+		  elif err.errno == errorcode.ER_BAD_DB_ERROR:
+			print("Database does not exist")
+		  else:
+			print(err)
+		  """
+		  print("error - will robinson")
+		  
+		self.db.set_converter_class(NumpyMySQLConverter)
+
 		# prepare a cursor object using cursor() method
-		self.cursor = self.db.cursor(mysql.connector.cursors.DictCursor)
+		self.cursor = self.db.cursor(dictionary=True)
+		self.prepcursor = self.db.cursor(prepared=True)
 		return(self.db,self.cursor)
 
 	def manual_connect_to_DB(self, host='localhost', user='viewer', 
@@ -231,24 +238,22 @@ class EcoFOCI_db_ProfileData(object):
 		port : int
 			database port
 
-		"""	    
-		self.db_config['host'] = host
-		self.db_config['user'] = user
-		self.db_config['password'] = password
-		self.db_config['database'] = database
-		self.db_config['port'] = port
+		"""
+		db_config = {}     
+		db_config['host'] = host
+		db_config['user'] = user
+		db_config['password'] = password
+		db_config['database'] = database
+		db_config['port'] = port
 
 		try:
-			self.db = mysql.connector.connect(self.db_config['host'], 
-									  self.db_config['user'],
-									  self.db_config['password'], 
-									  self.db_config['database'], 
-									  self.db_config['port'])
+			self.db = mysql.connector.connect(**db_config)
 		except:
 			print "db error"
 			
 		# prepare a cursor object using cursor() method
-		self.cursor = self.db.cursor(mysql.connector.cursors.DictCursor)
+		self.cursor = self.db.cursor(dictionary=True)
+		self.prepcursor = self.db.cursor(prepared=True)
 		return(self.db,self.cursor)
 
 	def read_profile(self, table=None, ProfileID=None, verbose=False):
@@ -260,22 +265,12 @@ class EcoFOCI_db_ProfileData(object):
 
 		result_dic = {}
 		try:
-			# Execute the SQL command
 			self.cursor.execute(sql)
-			# Get column names
-			rowid = {}
-			counter = 0
-			for i in self.cursor.description:
-				rowid[i[0]] = counter
-				counter = counter +1 
-			#print rowid
-			# Fetch all the rows in a list of lists.
-			results = self.cursor.fetchall()
-			for row in results:
+			for row in self.cursor:
 				result_dic[row['dep']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
 			return (result_dic)
 		except:
-			print "Error: unable to fetch data"
+			print "Error: unable to fecth data"
 
 	def count(self, table=None, start=None, end=None, verbose=False):
 		sql = ("SELECT count(*) FROM (SELECT * FROM `{table}` where ProfileID between"

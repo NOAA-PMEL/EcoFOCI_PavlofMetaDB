@@ -4,8 +4,8 @@
 #       Script to run EcoRAIDMooringMetaData2ptr for each grouping of deployments
 
 
-prog_dir="/Volumes/WDC_internal/Users/bell/Programs/Python/EcoFOCI_PavlofMetaDB/"
-data_dir="/Volumes/WDC_internal/Users/bell/ecoraid/2017/CTDcasts/dy1708/initial_archive/*.nc"
+prog_dir="/Users/bell/Programs/Python/EcoFOCI_PavlofMetaDB/"
+data_dir="/Users/bell/ecoraid/2017/CTDcasts/dy1708/initial_archive/*.nc"
 
 
 first_cast=0
