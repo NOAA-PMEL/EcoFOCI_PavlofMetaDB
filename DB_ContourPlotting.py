@@ -105,7 +105,7 @@ if args.time:
 	endcycle=args.castno[1]
 
 	#get information from local config file - a json formatted file
-	config_file = 'EcoFOCI_config/db_config/db_config_profiledata.pyini'
+	config_file = 'EcoFOCI_config/db_config/db_config_profiledata.yaml'
 
 
 	EcoFOCI_db = EcoFOCI_db_ProfileData()
