@@ -49,7 +49,7 @@ def latlon_convert(Mooring_Lat, Mooring_Lon):
 
 parser = argparse.ArgumentParser(description='SBE mooring report')
 parser.add_argument('MooringID', metavar='MooringID', type=str, help='MooringID eg 13BSM-2A')               
-parser.add_argument('-db', '--db_ini', type=str, help='path to db .pyini file')               
+parser.add_argument('-db', '--db_ini', type=str, help='path to db .yaml file')               
 parser.add_argument('-wf', '--wiki_format', action="store_true", help='format for wiki')               
 
 args = parser.parse_args()
@@ -58,7 +58,7 @@ args = parser.parse_args()
 if args.db_ini:
     config_file = args.db_ini
 else:
-    config_file = 'EcoFOCI_config/db_config/db_config_mooring.pyini'
+    config_file = 'EcoFOCI_config/db_config/db_config_mooring.yaml'
 
 
 EcoFOCI_db = EcoFOCI_db_datastatus()
