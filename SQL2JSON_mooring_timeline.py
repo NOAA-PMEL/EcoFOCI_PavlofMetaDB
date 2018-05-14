@@ -14,7 +14,7 @@ import pymysql
 import argparse
 
 #User Stack
-import utilities.ConfigParserLocal as ConfigParserLocal
+import io_utils.ConfigParserLocal as ConfigParserLocal
 
 __author__   = 'Shaun Bell'
 __email__    = 'shaun.bell@noaa.gov'
