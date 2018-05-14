@@ -614,7 +614,7 @@ parser.add_argument('-a', '--IsActive', action="store_true", help='flag for acti
 args = parser.parse_args()
 
 #get information from local config file - a json formatted file
-db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config.pyini')
+db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_mooring.pyini',ftype='pyini')
 
 #array of tables in mysql database to cycle through
 

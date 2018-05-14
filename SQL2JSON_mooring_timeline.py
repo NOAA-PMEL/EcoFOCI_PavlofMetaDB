@@ -511,7 +511,7 @@ parser.add_argument('OutputPath', metavar='OutputPath', type=str, help='path to 
 args = parser.parse_args()
 
 #get information from local config file - a json formatted file
-db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_mooring.pyini')
+db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_mooring.pyini',ftype='pyini')
 
 tablelist=['mooringdeploymentlogs','mooringrecoverylogs']
 
