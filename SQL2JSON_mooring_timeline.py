@@ -1,9 +1,9 @@
 #!/usr/bin/env
 
 """
- SQL2JSON_instrument_timeline.py
+ SQL2JSON_mooring_timeline.py
  
- build a JSON driven html file for instrument deployment start/end dates and cal dates
+ build a JSON driven html file for Mooring timelines
 
  Using Anaconda packaged Python 
 """
@@ -42,86 +42,10 @@ def close_DB(db):
     # disconnect from server
     db.close()
     
-def read_inst(db, cursor, table, ActiveOnly=False):
+def read_mooring(db, cursor, table):
     sql = "SELECT * from `%s`" % (table)
+    print sql
     
-    if ActiveOnly:
-        sql = sql + " WHERE IsActive !='n'"
-    
-    sql = sql + " ORDER BY `InstID` asc"
-    
-    #print sql
-    result_dic = {}
-    try:
-        # Execute the SQL command
-        cursor.execute(sql)
-        # Get column names
-        rowid = {}
-        counter = 0
-        for i in cursor.description:
-            rowid[i[0]] = counter
-            counter = counter +1 
-        #print rowid
-        # Fetch all the rows in a list of lists.
-        results = cursor.fetchall()
-        for row in results:
-            result_dic[row['InstID']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
-        return (result_dic)
-    except:
-        print "Error: unable to fecth data"
-
-def read_cal(db, cursor, table, InstID):
-    sql = ("SELECT * from `{0}` WHERE InstID='{1}' AND `CalDate` > '1990'").format(table, InstID)
-    #print sql
-
-    result_dic = {}
-    try:
-        # Execute the SQL command
-        cursor.execute(sql)
-        # Get column names
-        rowid = {}
-        counter = 0
-        for i in cursor.description:
-            rowid[i[0]] = counter
-            counter = counter +1 
-        #print rowid
-        # Fetch all the rows in a list of lists.
-        results = cursor.fetchall()
-        for row in results:
-            result_dic[row['id']] ={keys: row[keys] for val, keys in enumerate(row.keys())} 
-        return (result_dic)
-    except:
-        print "Error: unable to fecth data"
-
-def read_times(db, cursor, table, instrument):
-    """
-    SELECT * FROM (
-    SELECT `EcoFOCI`.`mooringrecoverylogs`.`RecoveryDateTimeGMT`, `EcoFOCI`.`mooringdeploymentlogs`.`DeploymentDateTimeGMT`,`EcoFOCI`.`mooringdeployedinstruments`.`MooringID`, `EcoFOCI`.`mooringdeployedinstruments`.`InstID` as mID, `EcoFOCI_instruments`.`inst_sbe37`.`InstID`  FROM `EcoFOCI`.`mooringdeployedinstruments`
-            right Join `EcoFOCI_instruments`.`inst_sbe37`
-            on `EcoFOCI_instruments`.`inst_sbe37`.`InstID` = `EcoFOCI`.`mooringdeployedinstruments`.`InstID`
-            left join `EcoFOCI`.`mooringdeploymentlogs`
-            on `EcoFOCI`.`mooringdeploymentlogs`.`MooringID` = `EcoFOCI`.`mooringdeployedinstruments`.`MooringID`
-            left join `EcoFOCI`.`mooringrecoverylogs`
-            on `EcoFOCI`.`mooringrecoverylogs`.`MooringID` = `EcoFOCI`.`mooringdeployedinstruments`.`MooringID`
-            ORDER BY `EcoFOCI_instruments`.`inst_sbe37`.`InstID`,`EcoFOCI`.`mooringdeployedinstruments`.`MooringID` DESC) as inst
-            WHERE InstID = 'SBE-37 1678'
-        """
-    sql = ("SELECT * FROM ("
-           " SELECT `EcoFOCI`.`mooringrecoverylogs`.`RecoveryDateTimeGMT`, "
-           " `EcoFOCI`.`mooringdeploymentlogs`.`DeploymentDateTimeGMT`, "
-           " `EcoFOCI`.`mooringdeploymentlogs`.`EstimatedRecoveryDate`, "
-           " `EcoFOCI`.`mooringdeployedinstruments`.`MooringID`, `EcoFOCI`.`mooringdeployedinstruments`.`InstID` as mID,"
-           " `EcoFOCI_instruments`.`{0}`.`InstID`  FROM `EcoFOCI`.`mooringdeployedinstruments`"
-           " right Join `EcoFOCI_instruments`.`{0}`"
-           " on `EcoFOCI_instruments`.`{0}`.`InstID` = `EcoFOCI`.`mooringdeployedinstruments`.`InstID`"
-           " left join `EcoFOCI`.`mooringdeploymentlogs`"
-           " on `EcoFOCI`.`mooringdeploymentlogs`.`MooringID` = `EcoFOCI`.`mooringdeployedinstruments`.`MooringID`"
-           " right join `EcoFOCI`.`mooringrecoverylogs`"
-           " on `EcoFOCI`.`mooringrecoverylogs`.`MooringID` = `EcoFOCI`.`mooringdeployedinstruments`.`MooringID`"
-           " ORDER BY `EcoFOCI_instruments`.`{0}`.`InstID`,`EcoFOCI`.`mooringdeployedinstruments`.`MooringID` DESC) as inst"
-           " WHERE InstID = '{1}'"
-            ).format(table, instrument)
-       
     #print sql
     result_dic = {}
     try:
@@ -142,48 +66,26 @@ def read_times(db, cursor, table, instrument):
     except:
         print "Error: unable to fecth data"
 
+
 """------------------------   html   Modules   ----------------------------------------"""
 
-def json_swimlanes(items, data, mkey, activestatus, lanes_count, instrument):
-    if activestatus == 'yes':
-        statuslabel = 'Active'
-    else:
-        statuslabel = 'InActive'
+def json_swimlanes(items, deployment, recovery, lanes_count, mooring_noyear, mooringID):
         
     items = ""
     ### valid deployment and recovery date
-    if not (data[mkey]['DeploymentDateTimeGMT'] == None) and not (data[mkey]['RecoveryDateTimeGMT'] == None):
-        items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),data[mkey]['RecoveryDateTimeGMT'].strftime('%Y,%m,%d'),statuslabel,instrument)
-    ### valid deployment, no recovery date - use estimated recovery date if available
-    elif not (data[mkey]['DeploymentDateTimeGMT'] == None) and (data[mkey]['RecoveryDateTimeGMT'] == None): #EstimatedRecoveryDate
-        if (data[mkey]['EstimatedRecoveryDate'] == None): #use estimated date
-            tempdate = data[mkey]['DeploymentDateTimeGMT']+datetime.timedelta(90)
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),tempdate.strftime('%Y,%m,%d'),statuslabel,instrument)
-        elif (data[mkey]['EstimatedRecoveryDate'] == '0000-00-00 00:00:00'): #NOT DEPLOYED
-            print "zero date, not null but should be"
+    if (not deployment[mooringID]['DeploymentDateTimeGMT'] == None) and (not recovery[mooringID]['RecoveryDateTimeGMT'] == None):
+        items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mooring_noyear, lanes_count,deployment[mooringID]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),recovery[mooringID]['RecoveryDateTimeGMT'].strftime('%Y,%m,%d'),'Recovered',mooring)
+        ### valid deployment, no recovery date - use estimated recovery date if available
+        ### no recovery date but valid deployment date
+    elif (not deployment[mooringID]['DeploymentDateTimeGMT'] == None) and (recovery[mooringID]['RecoveryDateTimeGMT'] == None):
+        if (not deployment[mooringID]['EstimatedRecoveryDate'] == None):
+            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{3}"), "end": new Date("{2}"), "desc":"test","class":"{4}"}},\n').format(mooring_noyear, lanes_count,deployment[mooringID]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),deployment[mooringID]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),'Deployed',mooring)
         else:
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'OnDeployment',instrument)
-    ### no deployment date, no recovery date - start and end date are arbitrarily listed as today but will not show up on figure
-    # if within last year these are in predeployment stage
-    elif (data[mkey]['DeploymentDateTimeGMT'] == None) and (data[mkey]['RecoveryDateTimeGMT'] == None):
-        if not (data[mkey]['EstimatedRecoveryDate'] == None): #use estimated date
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,datetime.datetime.now().strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'PreDeployment',instrument)
-        else: #NOT DEPLOYED
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,'20'+mkey[0:2]+',01,'+'01','20'+mkey[0:2]+',06,'+'01','MissingDates',instrument)
-    ### no deployment date but valid recovery date
-    elif (data[mkey]['DeploymentDateTimeGMT'] == None) and not (data[mkey]['RecoveryDateTimeGMT'] == None):
-        tempdate = data[mkey]['RecoveryDateTimeGMT']-datetime.timedelta(30)
-        items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,tempdate.strftime('%Y,%m,%d'),data[mkey]['RecoveryDateTimeGMT'].strftime('%Y,%m,%d'),'MissingDates',instrument)
+            tempdate = deployment[mooringID]['DeploymentDateTimeGMT']+datetime.timedelta(360)
+            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{3}"), "end": new Date("{2}"), "desc":"test","class":"{4}"}},\n').format(mooring_noyear, lanes_count,tempdate.strftime('%Y,%m,%d'),deployment[mooringID]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),'Deployed',mooring)
 
     return items
     
-def json_swimlanes_cal(items, data, mkey, activestatus, lanes_count,instrument):
-    items = ""
-    if not (data[mkey]['CalDate'] == None):
-        tempdate = data[mkey]['CalDate']+datetime.timedelta(30)
-        items = ('{{"id":"{2} Cal {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['CalDate'].strftime('%Y,%m,%d'),tempdate.strftime('%Y,%m,%d'),'Calibration',instrument)
-
-    return items
     
 def json_swimlanes_header():
     outstr = '''<!--
@@ -246,19 +148,19 @@ THE SOFTWARE.
 }
 
 /*blue*/
-.Active {
+.UnRecovered {
 	fill: #66CCFF;
 	stroke: #66CCFF;
 }
 
 /*red*/
-.InActive {
+.Recovered {
 	fill: #FF0000;
 	stroke: #FF0000;
 }
 
 /*green*/
-.OnDeployment {
+.Deployed {
 	fill: #66FF66;
 	stroke: #66FF66;
 }
@@ -295,8 +197,6 @@ var data =
 '''
 
     return outstr
-    
-    
 def json_swimlanes_footer():
 
         
@@ -488,7 +388,7 @@ mini.append('rect')
 // draw the selection area
 var brush = d3.svg.brush()
 	.x(x)
-	.extent([d3.time.month(now),d3.time.month.ceil(now)])
+	.extent([d3.time.monday(now),d3.time.saturday.ceil(now)])
 	.on("brush", display);
 
 mini.append('g')
@@ -604,97 +504,54 @@ function getPaths(items) {
 </html>
 """
     return outstr
-    
-    
 """----------------------------------Main----------------------------------------------"""
 
 parser = argparse.ArgumentParser(description='DB -> JSON -- Instrument Timelines')
 parser.add_argument('OutputPath', metavar='OutputPath', type=str, help='path to output files (eg. /full/path/to/data/')
-parser.add_argument('-a', '--IsActive', action="store_true", help='flag for active instruments only')
 args = parser.parse_args()
 
 #get information from local config file - a json formatted file
 db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_mooring.pyini',ftype='pyini')
 
-#array of tables in mysql database to cycle through
-
-tablelist=['inst_rcm','inst_adcp','inst_ecofluor','inst_spn1','inst_eppley','inst_iceprof','inst_mtr','inst_par', \
-        'inst_sbe3','inst_sbe4','inst_sbe5','inst_sbe9','inst_sbe16','inst_sbe26','inst_sbe37', \
-        'inst_sbe38','inst_sbe39','inst_sbe43','inst_sbe49','inst_sbe56','inst_wetstarfluor','inst_windsensors', \
-        'inst_wxsensors','inst_nitrates']
-cal_tablelist=['cal_rcm','cal_adcp', 'cal_ecofluor','cal_spn1','cal_eppley','cal_iceprof','cal_mtr','cal_par', \
-        'cal_sbe3','cal_sbe4','cal_sbe5','cal_sbe9','cal_sbe16','cal_sbe26','cal_sbe37', \
-        'cal_sbe38','cal_sbe39','cal_sbe43','cal_sbe49','cal_sbe56','cal_wetstarfluor','cal_windsensors', \
-        'cal_wxsensors','cal_nitrates']
-
-if args.IsActive:
-    ActiveOnly = True
-else:
-    ActiveOnly = False
+tablelist=['mooringdeploymentlogs','mooringrecoverylogs']
 
 
-for index_table, table in enumerate(tablelist):
 
-    lanes = "lanes:["
-    lanes_count = 0
-    items = "items:["
-    cal_items = ""
+lanes = "lanes:["
+lanes_count = 0
+items = "items:["
+cal_items = ""
 
-    if ActiveOnly:
-        outfilename = args.OutputPath + table+'swimlane_active.html'
-    else:
-        outfilename = args.OutputPath + table+'swimlane.html'
-        
-    db_config['database'] = 'EcoFOCI_instruments'
-    ### get individual inst serial numbers
-    (db,cursor) = connect_to_DB(db_config['host'], db_config['user'], db_config['password'], db_config['database'], db_config['port'])
-    Instruments = read_inst(db, cursor, table, ActiveOnly=ActiveOnly)
-    close_DB(db)
 
-    db_config['database'] = 'EcoFOCI'
-    ### for each instrument join the deployment/recovery information
-    (db,cursor) = connect_to_DB(db_config['host'], db_config['user'], db_config['password'], db_config['database'], db_config['port'])
-
-    db_config['database'] = 'EcoFOCI_instruments'
-    (db_cal,cursor_cal) = connect_to_DB(db_config['host'], db_config['user'], db_config['password'], db_config['database'], db_config['port'])
-        
-    for instrument in sorted(Instruments.keys()):
-        print instrument
-        InstDep = read_times(db, cursor, table, instrument)
-        CalRec = read_cal(db_cal, cursor_cal, cal_tablelist[index_table], instrument)
-        
-        if Instruments[instrument]['IsActive'] == 'n':
-            activestatus = 'no'
-        else:
-            activestatus = 'yes'    
-
-        lanes = lanes + ('{{"id":{0},"label":"{1}"}},\n').format(lanes_count, instrument)
-        if InstDep: #not empty
-            for mkey in InstDep.keys():
-                items = items + json_swimlanes(items, InstDep, mkey, activestatus, lanes_count,instrument)
-
-        else:
-            print('{0} has no deployment information').format(instrument)
-            items = items + ('{{"id":"{0} {2}","lane":{1},"label":"{0}","start": new Date(), "end": new Date(), "desc":"test","class":"InActive"}},\n').format('None',lanes_count,instrument)
-
-        if CalRec: #not empty
-            for dkey in CalRec.keys():
-                temp = json_swimlanes_cal(cal_items, CalRec, dkey, activestatus, lanes_count, instrument)
-                cal_items = cal_items + temp
-        else:
-            print('{0} has no cal information').format(instrument)
-
-        lanes_count +=1 
-
-    close_DB(db)
-    close_DB(db_cal)
+outfilename = args.OutputPath + 'all_mooring_swimlane.html'
     
-    with open(outfilename, 'w') as outfile:
-        outfile.write(json_swimlanes_header())
-        outfile.write('{')
-        outfile.write(lanes)
-        outfile.write('],')
-        outfile.write(items)
-        outfile.write(cal_items)
-        outfile.write('],}')
-        outfile.write(json_swimlanes_footer())
+(db,cursor) = connect_to_DB(db_config['host'], db_config['user'], db_config['password'], db_config['database'], db_config['port'])
+Mooring_Meta_dep = read_mooring(db, cursor, tablelist[0])
+Mooring_Meta_rec = read_mooring(db, cursor, tablelist[1])
+close_DB(db)
+ 
+mooring_stas = sorted(list(set([x[2:-1] for x in sorted(Mooring_Meta_dep.keys())])))
+for mooring_sta in mooring_stas:
+    has_record = False
+    for mooring in sorted(Mooring_Meta_dep.keys()):
+        print mooring_sta
+        
+        if mooring_sta == Mooring_Meta_dep[mooring]['MooringID'][2:-1] and has_record == False:
+            lanes = lanes + ('{{"id":{0},"label":"{1}"}},\n').format(lanes_count, Mooring_Meta_dep[mooring]['MooringID'][2:-1])
+            items = items + json_swimlanes(items, Mooring_Meta_dep, Mooring_Meta_rec, lanes_count, Mooring_Meta_dep[mooring]['MooringID'][2:-1],Mooring_Meta_dep[mooring]['MooringID'])
+            has_record = True
+        elif mooring_sta == Mooring_Meta_dep[mooring]['MooringID'][2:-1] and has_record == True:
+            items = items + json_swimlanes(items, Mooring_Meta_dep, Mooring_Meta_rec, lanes_count, Mooring_Meta_dep[mooring]['MooringID'][2:-1],Mooring_Meta_dep[mooring]['MooringID'])
+            
+    lanes_count +=1 
+
+
+with open(outfilename, 'w') as outfile:
+    outfile.write(json_swimlanes_header())
+    outfile.write('{')
+    outfile.write(lanes)
+    outfile.write('],')
+    outfile.write(items)
+    outfile.write(cal_items)
+    outfile.write('],}')
+    outfile.write(json_swimlanes_footer())
