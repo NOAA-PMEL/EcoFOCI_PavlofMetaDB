@@ -17,7 +17,6 @@ Collection of tools to interface with metadatabase for EcoFOCI
 ├── EcoRAIDMooringMetaData2ptr.py
 ├── OutputDBMooringLocation.py
 ├── README.md
-├── SQL2JSON_mooring_swimlanes.py
 ├── __init__.py
 ├── io_utils
 │   ├── ConfigParserLocal.py

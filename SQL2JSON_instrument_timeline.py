@@ -609,12 +609,20 @@ function getPaths(items) {
 """----------------------------------Main----------------------------------------------"""
 
 parser = argparse.ArgumentParser(description='DB -> JSON -- Instrument Timelines')
-parser.add_argument('OutputPath', metavar='OutputPath', type=str, help='path to output files (eg. /full/path/to/data/')
-parser.add_argument('-a', '--IsActive', action="store_true", help='flag for active instruments only')
+parser.add_argument('OutputPath', metavar='OutputPath', 
+    type=str, 
+    help='path to output files (eg. /full/path/to/data/')
+parser.add_argument('config_file_name', 
+    metavar='config_file_name', 
+    type=str, 
+    help='full path to db config file - db_config_mooring.yaml')
+parser.add_argument('-a', '--IsActive', 
+    action="store_true", 
+    help='flag for active instruments only')
 args = parser.parse_args()
 
 #get information from local config file - a json formatted file
-db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_mooring.pyini',ftype='pyini')
+db_config = ConfigParserLocal.get_config(args.config_file_name,ftype='yaml')
 
 #array of tables in mysql database to cycle through
 
