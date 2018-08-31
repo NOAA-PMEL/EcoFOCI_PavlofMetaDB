@@ -1,7 +1,7 @@
 {
     "database": "EcoFOCI", 
-    "host": "localhost", 
+    "host": "pavlof.pmel.noaa.gov", 
     "password": "e43mqS4fusEaGJLE", 
     "user": "pythonuser",
-    "port": 8889
+    "port": 3306
 }
