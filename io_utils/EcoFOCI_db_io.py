@@ -58,29 +58,29 @@ class EcoFOCI_db_datastatus(object):
     """Class definitions to access EcoFOCI Mooring Database"""
     
     def connect_to_DB(self, db_config_file=None):
-		"""Try to establish database connection
+        """Try to establish database connection
 
-		Parameters
-		----------
-		db_config_file : str
-		    full path to json formatted database config file    
+        Parameters
+        ----------
+        db_config_file : str
+            full path to json formatted database config file    
 
-		"""
-		self.db_config = ConfigParserLocal.get_config(db_config_file)
-		try:
-		    self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
-		    						  user=self.db_config['login']['user'],
-		    						  password=self.db_config['login']['password'], 
-		    						  database=self.db_config['database']['database'], 
-		    						  port=self.db_config['systems']['akutan']['port'])
-		except:
-		    print("db error")
-		    
+        """
+        self.db_config = ConfigParserLocal.get_config(db_config_file)
+        try:
+            self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
+                                        user=self.db_config['login']['user'],
+                                        password=self.db_config['login']['password'], 
+                                        database=self.db_config['database']['database'], 
+                                        port=self.db_config['systems']['akutan']['port'])
+        except:
+            print("db error")
+            
         self.db.set_converter_class(NumpyMySQLConverter)
 
-		# prepare a cursor object using cursor() method
-		self.cursor = self.db.cursor(dictionary=True)
-		return(self.db,self.cursor)
+        # prepare a cursor object using cursor() method
+        self.cursor = self.db.cursor(dictionary=True)
+        return(self.db,self.cursor)
 
     def manual_connect_to_DB(
         self,
@@ -213,27 +213,27 @@ class EcoFOCI_db_ProfileData(object):
     """Class definitions to access EcoFOCI Profile Data Database"""
 
     def connect_to_DB(self, db_config_file=None):
-		"""Try to establish database connection
+        """Try to establish database connection
 
-		Parameters
-		----------
-		db_config_file : str
-		    full path to json formatted database config file    
+        Parameters
+        ----------
+        db_config_file : str
+            full path to json formatted database config file    
 
-		"""
-		self.db_config = ConfigParserLocal.get_config(db_config_file)
-		try:
-		    self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
-		    						  user=self.db_config['login']['user'],
-		    						  password=self.db_config['login']['password'], 
-		    						  database=self.db_config['database']['database'], 
-		    						  port=self.db_config['systems']['akutan']['port'])
-		except:
-		    print("db error")
-		    
-		# prepare a cursor object using cursor() method
-		self.cursor = self.db.cursor(dictionary=True)
-		return(self.db,self.cursor)
+        """
+        self.db_config = ConfigParserLocal.get_config(db_config_file)
+        try:
+            self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
+                                        user=self.db_config['login']['user'],
+                                        password=self.db_config['login']['password'], 
+                                        database=self.db_config['database']['database'], 
+                                        port=self.db_config['systems']['akutan']['port'])
+        except:
+            print("db error")
+            
+        # prepare a cursor object using cursor() method
+        self.cursor = self.db.cursor(dictionary=True)
+        return(self.db,self.cursor)
 
     def manual_connect_to_DB(
         self,
