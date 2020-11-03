@@ -25,7 +25,7 @@ from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
 
 __author__   = 'Shaun Bell'
 __email__    = 'shaun.bell@noaa.gov'
-__created__  = datetime.datetime(2014, 01, 13)
+__created__  = datetime.datetime(2014, 1, 13)
 __modified__ = datetime.datetime(2016, 9, 13)
 __version__  = "0.2.0"
 __status__   = "Development"

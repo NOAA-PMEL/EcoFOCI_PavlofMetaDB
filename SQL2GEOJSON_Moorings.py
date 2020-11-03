@@ -24,8 +24,8 @@ from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
 
 __author__   = 'Shaun Bell'
 __email__    = 'shaun.bell@noaa.gov'
-__created__  = datetime.datetime(2015, 05, 28)
-__modified__ = datetime.datetime(2015, 05, 28)
+__created__  = datetime.datetime(2015, 5, 28)
+__modified__ = datetime.datetime(2015, 5, 28)
 __version__  = "0.1.0"
 __status__   = "Development"
 __keywords__ = 'moorings','csv','google maps', 'heatmap', 'geojson'
