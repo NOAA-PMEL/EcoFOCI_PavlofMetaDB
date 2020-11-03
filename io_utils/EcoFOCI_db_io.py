@@ -57,7 +57,7 @@ class NumpyMySQLConverter(mysql.connector.conversion.MySQLConverter):
 class EcoFOCI_db_datastatus(object):
     """Class definitions to access EcoFOCI Mooring Database"""
     
-    def connect_to_DB(self, db_config_file=None):
+    def connect_to_DB(self, db_config_file=None,ftype='yaml'):
         """Try to establish database connection
 
         Parameters
