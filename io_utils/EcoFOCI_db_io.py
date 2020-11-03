@@ -57,35 +57,30 @@ class NumpyMySQLConverter(mysql.connector.conversion.MySQLConverter):
 class EcoFOCI_db_datastatus(object):
     """Class definitions to access EcoFOCI Mooring Database"""
 
-    def connect_to_DB(self, db_config_file=None, ftype="yaml"):
-        """Try to establish database connection
+	def connect_to_DB(self, db_config_file=None):
+		"""Try to establish database connection
 
 		Parameters
 		----------
 		db_config_file : str
-			full path to json formatted database config file    
+		    full path to json formatted database config file    
 
 		"""
-        db_config = ConfigParserLocal.get_config(db_config_file, ftype=ftype)
-        try:
-            self.db = mysql.connector.connect(**db_config)
-        except mysql.connector.Error as err:
-            """
-		  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-			print("Something is wrong with your user name or password")
-		  elif err.errno == errorcode.ER_BAD_DB_ERROR:
-			print("Database does not exist")
-		  else:
-			print(err)
-		  """
-            print("error - will robinson")
-
+		self.db_config = ConfigParserLocal.get_config(db_config_file)
+		try:
+		    self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
+		    						  user=self.db_config['login']['user'],
+		    						  password=self.db_config['login']['password'], 
+		    						  database=self.db_config['database']['database'], 
+		    						  port=self.db_config['systems']['akutan']['port'])
+		except:
+		    print("db error")
+		    
         self.db.set_converter_class(NumpyMySQLConverter)
 
-        # prepare a cursor object using cursor() method
-        self.cursor = self.db.cursor(dictionary=True)
-        self.prepcursor = self.db.cursor(prepared=True)
-        return (self.db, self.cursor)
+		# prepare a cursor object using cursor() method
+		self.cursor = self.db.cursor(dictionary=True)
+		return(self.db,self.cursor)
 
     def manual_connect_to_DB(
         self,
@@ -217,35 +212,28 @@ class EcoFOCI_db_datastatus(object):
 class EcoFOCI_db_ProfileData(object):
     """Class definitions to access EcoFOCI Profile Data Database"""
 
-    def connect_to_DB(self, db_config_file=None, ftype="yaml"):
-        """Try to establish database connection
+	def connect_to_DB(self, db_config_file=None):
+		"""Try to establish database connection
 
 		Parameters
 		----------
 		db_config_file : str
-			full path to json formatted database config file    
+		    full path to json formatted database config file    
 
 		"""
-        db_config = ConfigParserLocal.get_config(db_config_file, ftype=ftype)
-        try:
-            self.db = mysql.connector.connect(**db_config)
-        except mysql.connector.Error as err:
-            """
-		  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-			print("Something is wrong with your user name or password")
-		  elif err.errno == errorcode.ER_BAD_DB_ERROR:
-			print("Database does not exist")
-		  else:
-			print(err)
-		  """
-            print("error - will robinson")
-
-        self.db.set_converter_class(NumpyMySQLConverter)
-
-        # prepare a cursor object using cursor() method
-        self.cursor = self.db.cursor(dictionary=True)
-        self.prepcursor = self.db.cursor(prepared=True)
-        return (self.db, self.cursor)
+		self.db_config = ConfigParserLocal.get_config(db_config_file)
+		try:
+		    self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
+		    						  user=self.db_config['login']['user'],
+		    						  password=self.db_config['login']['password'], 
+		    						  database=self.db_config['database']['database'], 
+		    						  port=self.db_config['systems']['akutan']['port'])
+		except:
+		    print("db error")
+		    
+		# prepare a cursor object using cursor() method
+		self.cursor = self.db.cursor(dictionary=True)
+		return(self.db,self.cursor)
 
     def manual_connect_to_DB(
         self,
