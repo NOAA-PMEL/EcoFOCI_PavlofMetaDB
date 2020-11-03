@@ -56,8 +56,8 @@ class NumpyMySQLConverter(mysql.connector.conversion.MySQLConverter):
 
 class EcoFOCI_db_datastatus(object):
     """Class definitions to access EcoFOCI Mooring Database"""
-
-	def connect_to_DB(self, db_config_file=None):
+    
+    def connect_to_DB(self, db_config_file=None):
 		"""Try to establish database connection
 
 		Parameters
@@ -212,7 +212,7 @@ class EcoFOCI_db_datastatus(object):
 class EcoFOCI_db_ProfileData(object):
     """Class definitions to access EcoFOCI Profile Data Database"""
 
-	def connect_to_DB(self, db_config_file=None):
+    def connect_to_DB(self, db_config_file=None):
 		"""Try to establish database connection
 
 		Parameters
