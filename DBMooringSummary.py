@@ -8,11 +8,29 @@
     mooring charactersistcs
     instruments deployed, depths, serial numbers
 
+History:
+=======
+
+2020-11-5: 
+
+Compatibility:
+==============
+python >=3.6 - currently has issues importing local libraries
+python 2.7 - **tested
+
+
 """
+
+import sys
+
+# must be python 3.6 or greater
+try:
+    assert sys.version_info < (3, 0)
+except AssertionError:
+    sys.exit("Must be running python 2.7 or (3 not yet supported)")
 
 # Standard library.
 import datetime
-import sys
 
 # System Stack
 import argparse
