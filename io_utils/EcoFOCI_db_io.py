@@ -204,7 +204,7 @@ class EcoFOCI_db_datastatus(object):
 
     def close(self):
         """close database"""
-        self.prepcursor.close()
+        #self.prepcursor.close()
         self.cursor.close()
         self.db.close()
 
