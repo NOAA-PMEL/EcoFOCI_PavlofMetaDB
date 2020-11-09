@@ -18,7 +18,7 @@ import sys
 import argparse
 
 #User Stack
-import io_utils.ConfigParserLocal as ConfigParserLocal
+from io_utils import ConfigParserLocal
 from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
 
 
