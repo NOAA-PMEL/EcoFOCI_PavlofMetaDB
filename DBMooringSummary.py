@@ -25,9 +25,9 @@ import sys
 
 # must be python 3.6 or greater
 try:
-    assert sys.version_info < (3, 0)
+    assert sys.version_info > (3, 0)
 except AssertionError:
-    sys.exit("Must be running python 2.7 or (3 not yet supported)")
+    sys.exit("Must be running python 2.7 (3 not yet supported)")
 
 # Standard library.
 import datetime
