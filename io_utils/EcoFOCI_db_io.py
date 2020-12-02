@@ -17,7 +17,7 @@
 """
 
 import mysql.connector
-import ConfigParserLocal
+import io_utils.ConfigParserLocal
 import datetime
 import numpy as np
 
