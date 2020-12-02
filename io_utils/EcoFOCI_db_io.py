@@ -76,7 +76,7 @@ class EcoFOCI_db_datastatus(object):
         except:
             print("db error")
             
-        self.db.set_converter_class(NumpyMySQLConverter)
+        #self.db.set_converter_class(NumpyMySQLConverter)
 
         # prepare a cursor object using cursor() method
         self.cursor = self.db.cursor(dictionary=True)
