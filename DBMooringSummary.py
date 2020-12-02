@@ -11,12 +11,12 @@
 History:
 =======
 
-2020-11-5: 
+2020-12-2: python3 only 
 
 Compatibility:
 ==============
-python >=3.6 - currently has issues importing local libraries
-python 2.7 - **tested
+python >=3.6 - Tested
+python 2.7 - **no longer supported
 
 
 """
@@ -27,7 +27,7 @@ import sys
 try:
     assert sys.version_info > (3, 0)
 except AssertionError:
-    sys.exit("Must be running python 2.7 (3 not yet supported)")
+    sys.exit("Must be running python 3")
 
 # Standard library.
 import datetime
@@ -101,13 +101,13 @@ except:
     sys.exit()
     
 if args.wiki_format:
-    print("Cruise:\t\t[[ {0}|{0} ]]\n".format(Mooring_Meta_sum[args.MooringID]['CruiseNumber']))
-    print("Latitude:\t{0}\n".format(Mooring_Meta_sum[args.MooringID]['Latitude']))
-    print("Longitude:\t{0}\n".format(Mooring_Meta_sum[args.MooringID]['Longitude']))
-    print("DeploymentDateTimeGMT:\t{0}\n".format(Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT']))
-    print("RecoveryDateTimeGMT:\t{0}\n".format(Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT']))
+    print(("Cruise:\t\t[[ {0}|{0} ]]\n").format(Mooring_Meta_sum[args.MooringID]['CruiseNumber']))
+    print(("Latitude:\t{0}\n").format(Mooring_Meta_sum[args.MooringID]['Latitude']))
+    print(("Longitude:\t{0}\n").format(Mooring_Meta_sum[args.MooringID]['Longitude']))
+    print(("DeploymentDateTimeGMT:\t{0}\n").format(Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT']))
+    print(("RecoveryDateTimeGMT:\t{0}\n").format(Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT']))
 
-    print("Comments:\t{0}\n".format(Mooring_Meta_notes[args.MooringID]['Comments']))
+    print(("Comments:\t{0}\n").format(Mooring_Meta_notes[args.MooringID]['Comments']))
 
     print("""
 
@@ -133,9 +133,9 @@ if args.wiki_format:
         if ('McClain' in Mooring_Meta_inst[instrument]['InstType']):
             continue        
 
-        print ("|-\n|{0}||{1}||{2}||{3}||{4}").format(
+        print (("|-\n|{0}||{1}||{2}||{3}||{4}").format(
         Mooring_Meta_inst[instrument]['InstType'],Mooring_Meta_inst[instrument]['SerialNo'], Mooring_Meta_inst[instrument]['Depth'],
-        Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes'])
+        Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes']))
 
     print("""|-\n|}
     
@@ -147,19 +147,19 @@ if args.wiki_format:
 else:
     print("{0} README".format(args.MooringID))
     print(" \n")
-    print("Cruise:\t\t{0}".format(Mooring_Meta_sum[args.MooringID]['CruiseNumber']))
-    print("Latitude:\t{0}".format(Mooring_Meta_sum[args.MooringID]['Latitude']))
-    print("Longitude:\t{0}".format(Mooring_Meta_sum[args.MooringID]['Longitude']))
-    print("Deployment Depth:\t{0}m\n".format(Mooring_Meta_sum[args.MooringID]['DeploymentDepth']))
-    print("DeploymentDateTimeGMT:\t{0}\n".format(Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT']))
-    print("RecoveryDateTimeGMT:\t{0}".format(Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT']))
+    print(("Cruise:\t\t{0}").format(Mooring_Meta_sum[args.MooringID]['CruiseNumber']))
+    print(("Latitude:\t{0}").format(Mooring_Meta_sum[args.MooringID]['Latitude']))
+    print(("Longitude:\t{0}".)format(Mooring_Meta_sum[args.MooringID]['Longitude']))
+    print(("Deployment Depth:\t{0}m\n").format(Mooring_Meta_sum[args.MooringID]['DeploymentDepth']))
+    print(("DeploymentDateTimeGMT:\t{0}\n").format(Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT']))
+    print(("RecoveryDateTimeGMT:\t{0}").format(Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT']))
 
     print("""
 
 Processed by: 
 
     """)
-    print("Comments:\t{0}\n".format(Mooring_Meta_notes[args.MooringID]['Comments']))
+    print(("Comments:\t{0}\n").format(Mooring_Meta_notes[args.MooringID]['Comments']))
 
     print("""
 DATA SUMMARY
@@ -193,9 +193,9 @@ Instrument\tSerial \t\tDepth\t\tDepth\t\t   Data   \t\tNotes
         if ('Flotation' in Mooring_Meta_inst[instrument]['InstType']):
             Mooring_Meta_inst[instrument]['InstType'] = 'float' 
 
-        print ("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}\t\t{5}").format(
+        print (("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}\t\t{5}").format(
         Mooring_Meta_inst[instrument]['InstType'],Mooring_Meta_inst[instrument]['SerialNo'], Mooring_Meta_inst[instrument]['Depth'],
-        Mooring_Meta_inst[instrument]['ActualDepth'],Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes'])
+        Mooring_Meta_inst[instrument]['ActualDepth'],Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes']))
 
     print("""
 
