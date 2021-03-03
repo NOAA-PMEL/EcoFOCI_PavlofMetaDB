@@ -46,7 +46,7 @@ def read_inst(db, cursor, table, ActiveOnly=False):
     sql = "SELECT * from `%s`" % (table)
     
     if ActiveOnly:
-        sql = sql + " WHERE SensorStatus !='RETIRED'"
+        sql = sql + " WHERE ServiceStatus !='RETIRED'"
     
     sql = sql + " ORDER BY `InstID` asc"
     
@@ -671,7 +671,7 @@ for index_table, table in enumerate(tablelist):
         InstDep = read_times(db, cursor, table, instrument)
         CalRec = read_cal(db_cal, cursor_cal, cal_tablelist[index_table], instrument)
         
-        if Instruments[instrument]['SensorStatus'] == 'RETIRED':
+        if Instruments[instrument]['ServiceStatus'] == 'RETIRED':
             activestatus = 'no'
         else:
             activestatus = 'yes'    
