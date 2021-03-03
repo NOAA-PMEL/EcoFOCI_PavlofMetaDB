@@ -18,8 +18,8 @@ import io_utils.ConfigParserLocal as ConfigParserLocal
 
 __author__   = 'Shaun Bell'
 __email__    = 'shaun.bell@noaa.gov'
-__created__  = datetime.datetime(2014, 04, 04)
-__modified__ = datetime.datetime(2014, 04, 04)
+__created__  = datetime.datetime(2014, 4, 4)
+__modified__ = datetime.datetime(2014, 4, 4)
 __version__  = "0.1.0"
 __status__   = "Development"
 __keywords__ = 'CTD', 'MetaInformation', 'Cruise', 'MySQL', 'website', 'PMEL', 'JSON'
@@ -46,7 +46,7 @@ def read_inst(db, cursor, table, ActiveOnly=False):
     sql = "SELECT * from `%s`" % (table)
     
     if ActiveOnly:
-        sql = sql + " WHERE IsActive !='n'"
+        sql = sql + " WHERE SensorStatus !='RETIRED'"
     
     sql = sql + " ORDER BY `InstID` asc"
     
@@ -671,7 +671,7 @@ for index_table, table in enumerate(tablelist):
         InstDep = read_times(db, cursor, table, instrument)
         CalRec = read_cal(db_cal, cursor_cal, cal_tablelist[index_table], instrument)
         
-        if Instruments[instrument]['IsActive'] == 'n':
+        if Instruments[instrument]['SensorStatus'] == 'RETIRED':
             activestatus = 'no'
         else:
             activestatus = 'yes'    
