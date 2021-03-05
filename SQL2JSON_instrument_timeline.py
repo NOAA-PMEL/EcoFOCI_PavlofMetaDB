@@ -110,6 +110,7 @@ def read_times(db, cursor, table, instrument):
            " SELECT `EcoFOCI`.`mooringrecoverylogs`.`RecoveryDateTimeGMT`, "
            " `EcoFOCI`.`mooringdeploymentlogs`.`DeploymentDateTimeGMT`, "
            " `EcoFOCI`.`mooringdeploymentlogs`.`EstimatedRecoveryDate`, "
+           " `EcoFOCI`.`mooringdeploymentlogs`.`DeploymentStatus`, "
            " `EcoFOCI`.`mooringdeployedinstruments`.`MooringID`, `EcoFOCI`.`mooringdeployedinstruments`.`InstID` as mID,"
            " `EcoFOCI_instruments`.`{0}`.`InstID`  FROM `EcoFOCI`.`mooringdeployedinstruments`"
            " right Join `EcoFOCI_instruments`.`{0}`"
