@@ -31,10 +31,12 @@ except AssertionError:
     sys.exit("Must be running python 3")
 
 import argparse
+import collections
 import datetime
+
 import yaml
 
-from io_utils import ConfigParserLocal 
+from io_utils import ConfigParserLocal
 from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
 
 __author__   = 'Shaun Bell'
@@ -143,34 +145,34 @@ if args.wiki_format:
 
 elif args.yaml_format:
     data_dic = {}
-    data_dic.update({'MooringID':args.MooringID})
-    data_dic.update({'Deployment':{'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
+    data_dic['MooringID'] = args.MooringID
+    data_dic['Deployment'] = {'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
                      'DeploymentLatitude':Mooring_Meta_sum[args.MooringID]['Latitude'],
                      'DeploymentLongitude':Mooring_Meta_sum[args.MooringID]['Longitude'],
                      'DeploymentDateTimeGMT':Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT'],
-                     'DeploymentDepth':Mooring_Meta_sum[args.MooringID]['DeploymentDepth']}})
-    data_dic.update({'Recovery':{'RecoveryCruise':Mooring_recovery_sum[args.MooringID]['CruiseNumber'],
+                     'DeploymentDepth':Mooring_Meta_sum[args.MooringID]['DeploymentDepth']}
+    data_dic['Recovery'] = {'RecoveryCruise':Mooring_recovery_sum[args.MooringID]['CruiseNumber'],
                      'RecoveryLatitude':Mooring_recovery_sum[args.MooringID]['Latitude'],
                      'RecoveryLongitude':Mooring_recovery_sum[args.MooringID]['Longitude'],
                      'RecoveryDateTimeGMT':Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT'],
-                     'RecoveryDepth':Mooring_recovery_sum[args.MooringID]['DeploymentDepth']}})
+                     'RecoveryDepth':Mooring_recovery_sum[args.MooringID]['DeploymentDepth']}
     #Predepolyment Information
-    data_dic.update({'Notes':Mooring_Meta_notes[args.MooringID]['Comments']})
+    data_dic['Notes'] = Mooring_Meta_notes[args.MooringID]['Comments']
 
     #build a dictionary of dictionaries for instrumentation
     InstrumentDic = {}
 
     for instrument in sorted(Mooring_Meta_inst.keys()):
-        InstrumentDic.update({Mooring_Meta_inst[instrument]['InstID']:{'InstType':Mooring_Meta_inst[instrument]['InstType'],
+        InstrumentDic[Mooring_Meta_inst[instrument]['InstID']] = {'InstType':Mooring_Meta_inst[instrument]['InstType'],
                             'SerialNo':Mooring_Meta_inst[instrument]['SerialNo'],
                             'DesignedDepth':Mooring_Meta_inst[instrument]['Depth'],
                             'ActualDepth':Mooring_Meta_inst[instrument]['ActualDepth'],
                             'PreDeploymentNotes':Mooring_Meta_inst[instrument]['PreDeploymentNotes'],
                             'PostDeploymentNotes':Mooring_Meta_inst[instrument]['PostDeploymentNotes'],
                             'Deployed':Mooring_Meta_inst[instrument]['Deployed'],
-                            'Recovered':Mooring_Meta_inst[instrument]['Recovered']}})
+                            'Recovered':Mooring_Meta_inst[instrument]['Recovered']}
     
-    data_dic.update({'Instrumentation':InstrumentDic})
+    data_dic['Instrumentation'] = InstrumentDic
 
     ConfigParserLocal.write_config(args.MooringID+'.yaml', data_dic)
 
