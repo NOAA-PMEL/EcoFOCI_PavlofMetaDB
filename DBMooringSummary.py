@@ -153,7 +153,7 @@ elif args.yaml_format:
                      'RecoveryLatitude':Mooring_recovery_sum[args.MooringID]['Latitude'],
                      'RecoveryLongitude':Mooring_recovery_sum[args.MooringID]['Longitude'],
                      'RecoveryDateTimeGMT':Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT'],
-                     'RecoveryDepth':Mooring_recovery_sum[args.MooringID]['RecoveryDepth']}})
+                     'RecoveryDepth':Mooring_recovery_sum[args.MooringID]['DeploymentDepth']}})
     #Predepolyment Information
     data_dic.update({'Notes':Mooring_Meta_notes[args.MooringID]['Comments']})
 
