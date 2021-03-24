@@ -77,12 +77,12 @@ def write_config(infile, data, ftype="yaml"):
 
     if ftype in ["json", "pyini"]:
         try:
-            data = json.dump(data, open(infile, "w"), sort_keys=True, indent=4)
+            json.dump(data, open(infile, "w"), sort_keys=True, indent=4)
         except:
             raise RuntimeError("{0} not found".format(infile))
     elif ftype in ["yaml"]:
         try:
-            data = yaml.safe_dump(data, open(infile, "w"), default_flow_style=False, sort_keys=False)
+            yaml.safe_dump(data, open(infile, "w"), default_flow_style=False, sort_keys=False)
         except:
             raise RuntimeError("{0} not found".format(infile))
     else:
