@@ -82,7 +82,7 @@ def write_config(infile, data, ftype="yaml"):
             raise RuntimeError("{0} not found".format(infile))
     elif ftype in ["yaml"]:
         try:
-            data = yaml.safe_dump(data, open(infile, "w"), default_flow_style=False)
+            data = yaml.safe_dump(data, open(infile, "w"), default_flow_style=False, sort_keys=False)
         except:
             raise RuntimeError("{0} not found".format(infile))
     else:
@@ -98,7 +98,7 @@ def pyini2yaml(infile, default_flow_style=False):
 
     try:
         d = yaml.safe_dump(
-            json.load(open(infile)), default_flow_style=default_flow_style
+            json.load(open(infile)), default_flow_style=default_flow_style, sort_keys=False
         )
 
     except:
