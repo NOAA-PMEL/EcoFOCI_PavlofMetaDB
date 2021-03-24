@@ -146,34 +146,49 @@ if args.wiki_format:
 elif args.yaml_format:
     data_dic = {'MooringID':None, 'Deployment':None, 'Recovery':None, 'Notes':None, 'Instrumentation':None}
     data_dic['MooringID'] = args.MooringID
-    data_dic['Deployment'] = {'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
-                     'DeploymentLatitude':Mooring_Meta_sum[args.MooringID]['Latitude'],
-                     'DeploymentLongitude':Mooring_Meta_sum[args.MooringID]['Longitude'],
-                     'DeploymentDateTimeGMT':Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT'],
-                     'DeploymentDepth':Mooring_Meta_sum[args.MooringID]['DeploymentDepth']}
-    data_dic['Recovery'] = {'RecoveryCruise':Mooring_recovery_sum[args.MooringID]['CruiseNumber'],
+
+    try:
+        data_dic['Deployment'] = {'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
+                        'DeploymentLatitude':Mooring_Meta_sum[args.MooringID]['Latitude'],
+                        'DeploymentLongitude':Mooring_Meta_sum[args.MooringID]['Longitude'],
+                        'DeploymentDateTimeGMT':Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT'],
+                        'DeploymentDepth':Mooring_Meta_sum[args.MooringID]['DeploymentDepth']}
+    except:
+        print(f'No Deployment Data for {args.MooringID}')
+    try:
+        data_dic['Recovery'] = {'RecoveryCruise':Mooring_recovery_sum[args.MooringID]['CruiseNumber'],
                      'RecoveryLatitude':Mooring_recovery_sum[args.MooringID]['Latitude'],
                      'RecoveryLongitude':Mooring_recovery_sum[args.MooringID]['Longitude'],
                      'RecoveryDateTimeGMT':Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT'],
                      'RecoveryDepth':Mooring_recovery_sum[args.MooringID]['DeploymentDepth']}
+    except:
+        print(f'No Recovery Data for {args.MooringID}')
+
+
     #Predepolyment Information
-    data_dic['Notes'] = Mooring_Meta_notes[args.MooringID]['Comments']
+    try:
+        data_dic['Notes'] = Mooring_Meta_notes[args.MooringID]['Comments']
+    except:
+        print(f'No Notes for {args.MooringID}')
 
     #build a dictionary of dictionaries for instrumentation
     InstrumentDic = {}
 
-    for instrument in sorted(Mooring_Meta_inst.keys()):
-        InstrumentDic[Mooring_Meta_inst[instrument]['InstID']] = {'InstType':Mooring_Meta_inst[instrument]['InstType'],
-                            'SerialNo':Mooring_Meta_inst[instrument]['SerialNo'],
-                            'DesignedDepth':Mooring_Meta_inst[instrument]['Depth'],
-                            'ActualDepth':Mooring_Meta_inst[instrument]['ActualDepth'],
-                            'PreDeploymentNotes':Mooring_Meta_inst[instrument]['PreDeploymentNotes'],
-                            'PostDeploymentNotes':Mooring_Meta_inst[instrument]['PostDeploymentNotes'],
-                            'Deployed':Mooring_Meta_inst[instrument]['Deployed'],
-                            'Recovered':Mooring_Meta_inst[instrument]['Recovered']}
-    
-    data_dic['Instrumentation'] = InstrumentDic
-
+    try:
+        for instrument in sorted(Mooring_Meta_inst.keys()):
+            InstrumentDic[Mooring_Meta_inst[instrument]['InstID']] = {'InstType':Mooring_Meta_inst[instrument]['InstType'],
+                                'SerialNo':Mooring_Meta_inst[instrument]['SerialNo'],
+                                'DesignedDepth':Mooring_Meta_inst[instrument]['Depth'],
+                                'ActualDepth':Mooring_Meta_inst[instrument]['ActualDepth'],
+                                'PreDeploymentNotes':Mooring_Meta_inst[instrument]['PreDeploymentNotes'],
+                                'PostDeploymentNotes':Mooring_Meta_inst[instrument]['PostDeploymentNotes'],
+                                'Deployed':Mooring_Meta_inst[instrument]['Deployed'],
+                                'Recovered':Mooring_Meta_inst[instrument]['Recovered']}
+        
+        data_dic['Instrumentation'] = InstrumentDic
+    except:
+        print(f'Instrument listing failed for {args.MooringID}')
+        
     ConfigParserLocal.write_config(args.MooringID+'.yaml', data_dic)
 
 else:
