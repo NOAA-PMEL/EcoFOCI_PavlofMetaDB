@@ -133,7 +133,7 @@ if args.wiki_format:
 
         print (("|-\n|{0}||{1}||{2}||{3}||{4}").format(
         Mooring_Meta_inst[instrument]['InstType'],Mooring_Meta_inst[instrument]['SerialNo'], Mooring_Meta_inst[instrument]['Depth'],
-        Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes']))
+        Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PostDeploymentNotes']))
 
     print("""|-\n|}
     
@@ -166,7 +166,7 @@ elif args.yaml_format:
                             'DesignedDepth':Mooring_Meta_inst[instrument]['Depth'],
                             'ActualDepth':Mooring_Meta_inst[instrument]['ActualDepth'],
                             'PreDeploymentNotes':Mooring_Meta_inst[instrument]['PreDeploymentNotes'],
-                            'PostDeploymentNotes':Mooring_Meta_inst[instrument]['DataSPostDeploymentNotestatus'],
+                            'PostDeploymentNotes':Mooring_Meta_inst[instrument]['PostDeploymentNotes'],
                             'Deployed':Mooring_Meta_inst[instrument]['Deployed'],
                             'Recovered':Mooring_Meta_inst[instrument]['Recovered']}})
     
@@ -225,7 +225,7 @@ Instrument\tSerial \t\tDepth\t\tDepth\t\t   Data   \t\tNotes
 
         print (("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}\t\t{5}").format(
         Mooring_Meta_inst[instrument]['InstType'],Mooring_Meta_inst[instrument]['SerialNo'], Mooring_Meta_inst[instrument]['Depth'],
-        Mooring_Meta_inst[instrument]['ActualDepth'],Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PerformanceNotes']))
+        Mooring_Meta_inst[instrument]['ActualDepth'],Mooring_Meta_inst[instrument]['DataStatus'], Mooring_Meta_inst[instrument]['PostDeploymentNotes']))
 
     print("""
 
