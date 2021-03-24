@@ -31,10 +31,12 @@ except AssertionError:
     sys.exit("Must be running python 3")
 
 import argparse
+import collections
 import datetime
+
 import yaml
 
-from io_utils import ConfigParserLocal 
+from io_utils import ConfigParserLocal
 from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
 
 __author__   = 'Shaun Bell'
@@ -142,7 +144,7 @@ if args.wiki_format:
     """)
 
 elif args.yaml_format:
-    data_dic = {}
+    data_dic = collections.OrderedDict()
     data_dic.update({'MooringID':args.MooringID})
     data_dic.update({'Deployment':{'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
                      'DeploymentLatitude':Mooring_Meta_sum[args.MooringID]['Latitude'],
@@ -158,7 +160,7 @@ elif args.yaml_format:
     data_dic.update({'Notes':Mooring_Meta_notes[args.MooringID]['Comments']})
 
     #build a dictionary of dictionaries for instrumentation
-    InstrumentDic = {}
+    InstrumentDic = collections.OrderedDict()
 
     for instrument in sorted(Mooring_Meta_inst.keys()):
         InstrumentDic.update({Mooring_Meta_inst[instrument]['InstID']:{'InstType':Mooring_Meta_inst[instrument]['InstType'],
