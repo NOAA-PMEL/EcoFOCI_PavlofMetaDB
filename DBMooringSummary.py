@@ -11,6 +11,7 @@
 History:
 =======
 
+2021-3-25: add yaml output for moorings
 2020-12-2: python3 only 
 
 Compatibility:
@@ -25,27 +26,22 @@ import sys
 
 # must be python 3.6 or greater
 try:
-    assert sys.version_info > (3, 0)
+    assert sys.version_info > (3, 6)
 except AssertionError:
     sys.exit("Must be running python 3")
 
-# Standard library.
-import datetime
-
-# System Stack
 import argparse
+import datetime
+import yaml
 
-#User Stack
-from io_utils import ConfigParserLocal
+from io_utils import ConfigParserLocal 
 from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
-
-
 
 __author__   = 'Shaun Bell'
 __email__    = 'shaun.bell@noaa.gov'
 __created__  = datetime.datetime(2014, 1, 13)
-__modified__ = datetime.datetime(2016, 9, 13)
-__version__  = "0.2.0"
+__modified__ = datetime.datetime(2021, 3, 24)
+__version__  = "0.3.0"
 __status__   = "Development"
 
 """------------------------------- lat/lon ----------------------------------------"""
@@ -63,12 +59,14 @@ def latlon_convert(Mooring_Lat, Mooring_Lon):
         lon = -1 * lon
         
     return (lat, lon)
+
 """------------------------------- MAIN ----------------------------------------"""
 
 parser = argparse.ArgumentParser(description='SBE mooring report')
 parser.add_argument('MooringID', metavar='MooringID', type=str, help='MooringID eg 13BSM-2A')               
 parser.add_argument('-db', '--db_ini', type=str, help='path to db .yaml file')               
 parser.add_argument('-wf', '--wiki_format', action="store_true", help='format for wiki')               
+parser.add_argument('-yaml', '--yaml_format', action="store_true", help='format for yaml files')               
 
 args = parser.parse_args()
     
@@ -111,10 +109,10 @@ if args.wiki_format:
 
     print("""
 
-==INSTRUMENT SUMMARY==
+    ==INSTRUMENT SUMMARY==
 
-{|class="wikitable sortable"
-!Instrument!!Serial Number!!Depth!!Data Status!!Notes""")
+    {|class="wikitable sortable"
+    !Instrument!!Serial Number!!Depth!!Data Status!!Notes""")
 
     for instrument in sorted(Mooring_Meta_inst.keys()):
         ### specific text processing for long named instuments to map to a clean format
@@ -139,10 +137,42 @@ if args.wiki_format:
 
     print("""|-\n|}
     
-==Data Processing Description and Notes==
+    ==Data Processing Description and Notes==
 
-""")
+    """)
 
+elif args.yaml_format:
+    data_dic = {}
+    data_dic.update({'MooringID':args.MooringID})
+    data_dic.update({'Deployment':{'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
+                     'DeploymentLatitude':Mooring_Meta_sum[args.MooringID]['Latitude'],
+                     'DeploymentLongitude':Mooring_Meta_sum[args.MooringID]['Longitude'],
+                     'DeploymentDateTimeGMT':Mooring_Meta_sum[args.MooringID]['DeploymentDateTimeGMT'],
+                     'DeploymentDepth':Mooring_Meta_sum[args.MooringID]['DeploymentDepth']}})
+    data_dic.update({'Recovery':{'RecoveryCruise':Mooring_recovery_sum[args.MooringID]['CruiseNumber'],
+                     'RecoveryLatitude':Mooring_recovery_sum[args.MooringID]['Latitude'],
+                     'RecoveryLongitude':Mooring_recovery_sum[args.MooringID]['Longitude'],
+                     'RecoveryDateTimeGMT':Mooring_recovery_sum[args.MooringID]['RecoveryDateTimeGMT'],
+                     'RecoveryDepth':Mooring_recovery_sum[args.MooringID]['RecoveryDepth']}})
+    #Predepolyment Information
+    data_dic.update({'Notes':Mooring_Meta_notes[args.MooringID]['Comments']})
+
+    #build a dictionary of dictionaries for instrumentation
+    InstrumentDic = {}
+
+    for instrument in sorted(Mooring_Meta_inst.keys()):
+        InstrumentDic.update({Mooring_Meta_inst[instrument]['InstID']:{'InstType':Mooring_Meta_inst[instrument]['InstType'],
+                            'SerialNo':Mooring_Meta_inst[instrument]['SerialNo'],
+                            'DesignedDepth':Mooring_Meta_inst[instrument]['Depth'],
+                            'ActualDepth':Mooring_Meta_inst[instrument]['ActualDepth'],
+                            'PreDeploymentNotes':Mooring_Meta_inst[instrument]['PreDeploymentNotes'],
+                            'PostDeploymentNotes':Mooring_Meta_inst[instrument]['DataSPostDeploymentNotestatus'],
+                            'Deployed':Mooring_Meta_inst[instrument]['Deployed'],
+                            'Recovered':Mooring_Meta_inst[instrument]['Recovered']}})
+    
+    data_dic.update({'Instrumentation':InstrumentDic})
+
+    ConfigParserLocal.write_config(args.MooringID+'.yaml', data_dic)
 
 else:
     print("{0} README".format(args.MooringID))
