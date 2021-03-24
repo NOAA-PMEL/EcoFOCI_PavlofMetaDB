@@ -144,7 +144,7 @@ if args.wiki_format:
     """)
 
 elif args.yaml_format:
-    data_dic = {}
+    data_dic = {'MooringID':None, 'Deployment':None, 'Recovery':None, 'Notes':None, 'Instrumentation':None}
     data_dic['MooringID'] = args.MooringID
     data_dic['Deployment'] = {'DeploymentCruise':Mooring_Meta_sum[args.MooringID]['CruiseNumber'],
                      'DeploymentLatitude':Mooring_Meta_sum[args.MooringID]['Latitude'],
