@@ -19,7 +19,7 @@ import numpy as np
 
 #User Stack
 import io_utils.ConfigParserLocal as ConfigParserLocal
-from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
+from io_utils.EcoFOCI_db_io import EcoFOCI_PUFF_db_datastatus
 
 
 __author__   = 'Shaun Bell'
