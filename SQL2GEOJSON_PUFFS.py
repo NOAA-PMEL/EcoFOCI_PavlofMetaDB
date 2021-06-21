@@ -99,7 +99,7 @@ if args.geojson:
     geojson_point_coords = ''
 
     for a_ind in sorted(data_puffs.keys()):
-        point_coords = point_coords + (f'new google.maps.LatLng({data_puffs[a_ind]['DEPLOY_LAT']},{data_puffs[a_ind]['DEPLOY_LON']})')
+        point_coords = point_coords + ('new google.maps.LatLng({0},{1})').format(data_puffs[a_ind]['DEPLOY_LAT'],data_puffs[a_ind]['DEPLOY_LON'])
 
         if (a_ind != sorted(data_puffs.keys())[-1]):
             geojson_point_coords = geojson_point_coords + ', '
