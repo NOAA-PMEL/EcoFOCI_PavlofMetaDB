@@ -62,7 +62,7 @@ if args.geojson:
     geojson_point_coords = ''
 
     for a_ind in sorted(data_puffs.keys()):
-        geojson_point_coords = geojson_point_coords + ('new google.maps.LatLng({0},{1})').format(data_puffs[a_ind]['DEPLOY_LAT'],data_puffs[a_ind]['DEPLOY_LON'])
+        geojson_point_coords = geojson_point_coords + ('{{"type": "Feature","geometry": {{"type": "Point","coordinates": [{1},{0}]}}, "properties": {{"PUFF":"{2}" }}}}').format(data_puffs[a_ind]['DEPLOY_LAT'],data_puffs[a_ind]['DEPLOY_LON'],data_puffs[a_ind]['ENG_SN'])
 
         if (a_ind != sorted(data_puffs.keys())[-1]):
             geojson_point_coords = geojson_point_coords + ', '
