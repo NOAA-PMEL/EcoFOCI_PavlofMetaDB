@@ -45,7 +45,7 @@ config_file = 'EcoFOCI_config/db_config/db_config_drifters.yaml'
 EcoFOCI_db = EcoFOCI_PUFF_db_datastatus()
 (db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file,ftype='yaml')
 
-data_mooring = EcoFOCI_db.read_floats(table='popupfloats_deployed')
+data_puffs = EcoFOCI_db.read_floats(table='popupfloats_deployed')
 
 if args.geojson:
     ### "Generating .geojson"
