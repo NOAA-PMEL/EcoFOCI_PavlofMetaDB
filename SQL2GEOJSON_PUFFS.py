@@ -11,14 +11,15 @@ export all ctd cast locations to geojson format for plotting
 #System Stack
 import datetime
 import argparse
-import pymysql
+import mysql.connector
 import sys
 
 #Science Stack
 import numpy as np
 
 #User Stack
-import utilities.ConfigParserLocal as ConfigParserLocal
+import io_utils.ConfigParserLocal as ConfigParserLocal
+from io_utils.EcoFOCI_db_io import EcoFOCI_db_datastatus
 
 
 __author__   = 'Shaun Bell'
