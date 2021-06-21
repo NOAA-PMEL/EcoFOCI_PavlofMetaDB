@@ -80,9 +80,11 @@ parser.add_argument('--geojson', action='store_true', help='create geojson file'
 args = parser.parse_args()
 
 #get information from local config file - a json formatted file
-db_config = ConfigParserLocal.get_config('../db_connection_config_files/db_config_drifters.pyini')
+config_file = 'EcoFOCI_config/db_config/db_config_mooring.yaml'
 
-(db,cursor) = connect_to_DB(db_config['host'], db_config['user'], db_config['password'], db_config['database'])
+EcoFOCI_db = EcoFOCI_db_datastatus()
+(db,cursor) = EcoFOCI_db.connect_to_DB(db_config_file=config_file,ftype='yaml')
+
 data_puffs = read_floats(db, cursor, 'popupfloats_deployed')
 
 if args.geojson:
