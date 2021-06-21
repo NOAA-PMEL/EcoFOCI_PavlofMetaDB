@@ -208,6 +208,100 @@ class EcoFOCI_db_datastatus(object):
         self.cursor.close()
         self.db.close()
 
+class EcoFOCI_PUFF_db_datastatus(object):
+    """Class definitions to access EcoFOCI Mooring Database"""
+    
+    def connect_to_DB(self, db_config_file=None,ftype=None):
+        """Try to establish database connection
+
+        Parameters
+        ----------
+        db_config_file : str
+            full path to json formatted database config file    
+
+        """
+        self.db_config = ConfigParserLocal.get_config(db_config_file,ftype='yaml')
+        try:
+            self.db = mysql.connector.connect(host=self.db_config['systems']['akutan']['host'], 
+                                        user=self.db_config['login']['user'],
+                                        password=self.db_config['login']['password'], 
+                                        database=self.db_config['database']['database'], 
+                                        port=self.db_config['systems']['akutan']['port'])
+        except:
+            print("db error")
+            
+        #self.db.set_converter_class(NumpyMySQLConverter)
+
+        # prepare a cursor object using cursor() method
+        self.cursor = self.db.cursor(dictionary=True)
+        return(self.db,self.cursor)
+
+    def manual_connect_to_DB(
+        self,
+        host="localhost",
+        user="viewer",
+        password=None,
+        database="ecofoci",
+        port=3306,
+    ):
+        """Try to establish database connection
+
+		Parameters
+		----------
+		host : str
+			ip or domain name of host
+		user : str
+			account user
+		password : str
+			account password
+		database : str
+			database name to connect to
+		port : int
+			database port
+
+		"""
+        db_config = {}
+        db_config["host"] = host
+        db_config["user"] = user
+        db_config["password"] = password
+        db_config["database"] = database
+        db_config["port"] = port
+
+        try:
+            self.db = mysql.connector.connect(**db_config)
+        except:
+            print("db error")
+
+        # prepare a cursor object using cursor() method
+        self.cursor = self.db.cursor(dictionary=True)
+        self.prepcursor = self.db.cursor(prepared=True)
+        return (self.db, self.cursor)
+
+    def read_floats(self, table=None, verbose=False, index_str="ENG_SN", **kwargs):
+        """build sql call based on kwargs"""
+
+        sql = ("SELECT * FROM `{0}` ").format(table)
+
+        if verbose:
+            print(sql)
+
+        result_dic = {}
+        try:
+            self.cursor.execute(sql)
+            for row in self.cursor:
+                result_dic[row[index_str]] = {
+                    keys: row[keys] for val, keys in enumerate(row.keys())
+                }
+            return result_dic
+        except:
+            print("Error: unable to fecth data")
+
+    def close(self):
+        """close database"""
+        #self.prepcursor.close()
+        self.cursor.close()
+        self.db.close()
+
 
 class EcoFOCI_db_ProfileData(object):
     """Class definitions to access EcoFOCI Profile Data Database"""
