@@ -115,5 +115,5 @@ if args.geojson:
         '}\n'
         )
     
-    print(f'{geojson_header}{geojson_point_coords}{geojson_tail}') 
+    print(geojson_header+geojson_point_coords+geojson_tail) 
     
