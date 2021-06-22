@@ -58,7 +58,13 @@ if args.geojson:
         geojson_point_coords = geojson_point_coords + ('''
         {{"type": "Feature","geometry": 
         {{"type": "Point","coordinates": [{1},{0}]}}, 
-        "properties": {{"ENG_SN":"{2}", "IMEI_SN":"{3}"}}}}''').format(data_puffs[a_ind]['DEPLOY_LAT'],data_puffs[a_ind]['DEPLOY_LON'],data_puffs[a_ind]['ENG_SN'],data_puffs[a_ind]['IMEI_SN'])
+        "properties": {{"ENG_SN":"{2}", "IMEI_SN":"{3}","GEN":"{4}", "DEPLOY_CRUISE":"{5}",
+        "SITE":"{6}", "DEPLOY_DEPTH_meters":"{7}", "DEPLOY_ DATETIMEUTC":"{8}", "UNIT_START_DATETIMEUTC":"{9}",
+        "RELEASE_DATETIMEUTC":"{10}"}}}}''').format(data_puffs[a_ind]['DEPLOY_LAT'],
+        data_puffs[a_ind]['DEPLOY_LON'],data_puffs[a_ind]['ENG_SN'],data_puffs[a_ind]['IMEI_SN'],
+        data_puffs[a_ind]['GEN'],data_puffs[a_ind]['DEPLOY_CRUISE'],data_puffs[a_ind]['SITE'],
+        data_puffs[a_ind]['DEPLOY_DEPTH_meters'],data_puffs[a_ind]['DEPLOY_ DATETIMEUTC'],data_puffs[a_ind]['UNIT_START_DATETIMEUTC'],
+        data_puffs[a_ind]['RELEASE_DATETIMEUTC'])
 
         if (a_ind != sorted(data_puffs.keys())[-1]):
             geojson_point_coords = geojson_point_coords + ', '
