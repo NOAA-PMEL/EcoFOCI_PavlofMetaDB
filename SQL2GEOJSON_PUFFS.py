@@ -50,14 +50,7 @@ data_puffs = EcoFOCI_db.read_floats(table='popupfloats_deployed')
 if args.geojson:
     ### "Generating .geojson"
     geojson_header = (
-        '{\n'
-        '"type": "FeatureCollection",\n'
-        '"features": [\n'
-        '{\n'
-        '"type": "Feature",\n'
-        '"geometry": {\n'
-        '"type": "MultiPoint",\n'
-        '"coordinates": [ '
+        '{"type": "FeatureCollection","features": ['
         )
     geojson_point_coords = ''
 
@@ -69,14 +62,8 @@ if args.geojson:
 
     geojson_tail = (
         ']\n'
-        '},\n'
-        '"properties": {\n'
-        '"prop0": "value0"\n'
-        '}\n'
-        '}\n'
-        ']\n'
         '}\n'
         )
-    
+        
     print(geojson_header+geojson_point_coords+geojson_tail) 
     
