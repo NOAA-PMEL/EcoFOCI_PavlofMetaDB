@@ -152,29 +152,41 @@ def json_swimlanes(items, data, mkey, activestatus, lanes_count, instrument):
         statuslabel = 'InActive'
         
     items = ""
-    ### valid deployment and recovery date
-    if not (data[mkey]['DeploymentDateTimeGMT'] == None) and not (data[mkey]['RecoveryDateTimeGMT'] == None):
-        items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),data[mkey]['RecoveryDateTimeGMT'].strftime('%Y,%m,%d'),statuslabel,instrument)
-    ### valid deployment, no recovery date - use estimated recovery date if available
-    elif not (data[mkey]['DeploymentDateTimeGMT'] == None) and (data[mkey]['RecoveryDateTimeGMT'] == None): #EstimatedRecoveryDate
+
+    ### Based on Specified Mooring deployment status
+    if data[mkey]['DeploymentStatus'] == 'UNRECOVERED':
         if (data[mkey]['EstimatedRecoveryDate'] == None): #use estimated date
             tempdate = data[mkey]['DeploymentDateTimeGMT']+datetime.timedelta(90)
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),tempdate.strftime('%Y,%m,%d'),statuslabel,instrument)
-        elif (data[mkey]['EstimatedRecoveryDate'] == '0000-00-00 00:00:00'): #NOT DEPLOYED
-            print "zero date, not null but should be"
+            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),tempdate.strftime('%Y,%m,%d'),'InActive',instrument)
+        elif (data[mkey]['EstimatedRecoveryDate'] != None):
+            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'InActive',instrument)
         else:
+            items= ""
+    if data[mkey]['DeploymentStatus'] == 'RECOVERED':
+        if (data[mkey]['RecoveryDateTimeGMT'] != None) and (data[mkey]['DeploymentDateTimeGMT'] != None):
+            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),data[mkey]['RecoveryDateTimeGMT'].strftime('%Y,%m,%d'),'Active',instrument)
+        else:
+            items = ""
+    if data[mkey]['DeploymentStatus'] == 'PREDEPLOYMENT':
+        if (data[mkey]['EstimatedRecoveryDate'] != None):
+            try:
+                tempdate = data[mkey]['EstimatedRecoveryDate']-datetime.timedelta(365)
+                items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,tempdate.strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'PreDeployment',instrument)
+            except:
+                items = ""
+        else:
+            items = ""
+    if data[mkey]['DeploymentStatus'] == 'DEPLOYED':
+        if(data[mkey]['DeploymentDateTimeGMT'] != None):
             items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,data[mkey]['DeploymentDateTimeGMT'].strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'OnDeployment',instrument)
-    ### no deployment date, no recovery date - start and end date are arbitrarily listed as today but will not show up on figure
-    # if within last year these are in predeployment stage
-    elif (data[mkey]['DeploymentDateTimeGMT'] == None) and (data[mkey]['RecoveryDateTimeGMT'] == None):
-        if not (data[mkey]['EstimatedRecoveryDate'] == None): #use estimated date
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,datetime.datetime.now().strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'PreDeployment',instrument)
-        else: #NOT DEPLOYED
-            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,'20'+mkey[0:2]+',01,'+'01','20'+mkey[0:2]+',06,'+'01','MissingDates',instrument)
-    ### no deployment date but valid recovery date
-    elif (data[mkey]['DeploymentDateTimeGMT'] == None) and not (data[mkey]['RecoveryDateTimeGMT'] == None):
-        tempdate = data[mkey]['RecoveryDateTimeGMT']-datetime.timedelta(30)
-        items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,tempdate.strftime('%Y,%m,%d'),data[mkey]['RecoveryDateTimeGMT'].strftime('%Y,%m,%d'),'MissingDates',instrument)
+        else:
+            items = ""
+    if data[mkey]['DeploymentStatus'] == 'NOTDEPLOYED':
+        try:
+            tempdate = data[mkey]['EstimatedRecoveryDate']-datetime.timedelta(365)
+            items = items + ('{{"id":"{0} {5}","lane":{1},"label":"{0}","start": new Date("{2}"), "end": new Date("{3}"), "desc":"test","class":"{4}"}},\n').format(mkey, lanes_count,tempdate.strftime('%Y,%m,%d'),data[mkey]['EstimatedRecoveryDate'].strftime('%Y,%m,%d'),'NotDeployed',instrument)
+        except:
+            items = ""
 
     return items
     
@@ -262,6 +274,12 @@ THE SOFTWARE.
 .OnDeployment {
 	fill: #66FF66;
 	stroke: #66FF66;
+}
+
+/*grey*/
+.NotDeployed {
+	fill: #A9A9A9;
+	stroke: #000000;
 }
 
 /*yellow*/
